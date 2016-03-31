@@ -1,0 +1,87 @@
+CREATE DATABASE IF NOT EXISTS moviedb;
+USE moviedb;
+
+
+CREATE TABLE IF NOT EXISTS movies
+(
+
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	title VARCHAR(100) DEFAULT '' NOT NULL,
+	year INT NOT NULL,
+	director VARCHAR(100) DEFAULT '' NOT NULL,
+	banner_url VARCHAR(200),
+	trailer_url VARCHAR(200)
+
+);
+
+CREATE TABLE IF NOT EXISTS stars
+(
+
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	first_name VARCHAR(50) DEFAULT '' NOT NULL,
+	last_name VARCHAR(50) DEFAULT '' NOT NULL,
+	dob DATE,
+	photo_url VARCHAR(200) 
+
+);
+
+CREATE TABLE IF NOT EXISTS stars_in_movies
+(
+	
+	star_id INT NOT NULL,
+	movie_id INT NOT NULL,
+	FOREIGN KEY(star_id) REFERENCES stars(id),
+	FOREIGN KEY(movie_id) REFERENCES movies(id)
+	
+);
+
+CREATE TABLE IF NOT EXISTS genres
+(
+
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	name VARCHAR(32) NOT NULL
+
+);
+
+CREATE TABLE IF NOT EXISTS genres_in_movies
+(
+	
+	genre_id INT NOT NULL,
+	movie_id INT NOT NULL,
+	FOREIGN KEY(genre_id) REFERENCES genres(id),
+	FOREIGN KEY(movie_id) REFERENCES movies(id)
+	
+);
+
+
+CREATE TABLE IF NOT EXISTS creditcards
+(
+	id VARCHAR(20) DEFAULT '' NOT NULL PRIMARY KEY,
+	first_name VARCHAR(50) DEFAULT '' NOT NULL,
+	last_name VARCHAR(50) DEFAULT '' NOT NULL,
+	expiration DATE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS customers
+(
+
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	first_name VARCHAR(50) DEFAULT '' NOT NULL,
+	last_name VARCHAR(50) DEFAULT '' NOT NULL,
+	cc_id VARCHAR(20) DEFAULT '' NOT NULL,
+	address VARCHAR(200) DEFAULT '' NOT NULL,
+	email VARCHAR(50) DEFAULT '' NOT NULL,
+	password VARCHAR(20) DEFAULT '' NOT NULL,
+	FOREIGN KEY(cc_id) REFERENCES creditcards(id)
+
+);
+
+CREATE TABLE IF NOT EXISTS sales
+(
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	customer_id INT NOT NULL,
+	movie_id INT NOT NULL,
+	sale_date DATE NOT NULL,
+	FOREIGN KEY(customer_id) REFERENCES customers(id),
+	FOREIGN KEY(movie_id) REFERENCES movies(id)
+);
