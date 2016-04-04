@@ -3,71 +3,271 @@
 // Coded by Chen Li/Kirill Petrov Winter, 2005
 // Slightly revised for ICS185 Spring 2005, by Norman Jacobson
 
+import java.io.Console;
 import java.sql.*; // Enable SQL processing
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class JDBC {
+	// public static void insertPerson(int type)
+	// {
+	//
+	// switch (type) {
+	// case 1:
+	// insertPerson("movies");
+	// break;
+	// case 2:
+	// insertPerson("stars");
+	// break;
+	// case 3:
+	// insertPerson("stars_in_movies");
+	// break;
+	// case 4:
+	// insertPerson("genres");
+	// break;
+	// case 5:
+	// insertPerson("genres_in_movies");
+	// break;
+	// case 6:
+	// insertPerson("creditcards");
+	// break;
+	// case 7:
+	// insertPerson("customers");
+	// break;
+	// case 8:
+	// insertPerson("sales");
+	// break;
+	// default:
+	// System.out.println("\nPick a valid number...");
+	// break;
+	// }
+	// }
+	// public static void insertPerson(String type)
+	// {
+	// System.out.println("Attempting insert into "+type);
+	//
+	// }
 	public static String getMovies(String inp, Connection connection) throws SQLException {
 		Statement select = connection.createStatement();
-		String more="";
-		if(inp.matches("^-?\\d+$"))
-		{
-			//System.out.println("......"+inp);
-			more="AND s.id="+inp + " ";
-		}
-		else
-		{
-			String[] splt=inp.split(" ");
-			
-			if(splt.length==0)
-				more="";
-			else if(splt.length==1)
-				more="AND s.first_name="+splt[0] + " ";
-			else if(splt.length==2)
-				more="AND s.first_name="+splt[0] + " AND s.last_name="+splt[1] + " ";
-			else{
-//				for(int i=1;i<splt.length-1;++i)
-//				{
-//					more+="AND (s.first_name="+Arrays.toString(Arrays.copyOfRange(splt,0,i)) + 
-//							" AND s.last_name="+Arrays.toString(Arrays.copyOfRange(splt,i,splt.length))  + ") OR";
-//				}
-				System.out.println("Something went wrong. Please enter the First Name and Last Name Sepeartely: ");
-				Scanner a=new Scanner(System.in);
-				System.out.println("First Name: ");
-				String first= a.nextLine();
-				
-				System.out.println("Last Name: ");
-				String last= a.nextLine();
-				
-				more="AND s.first_name='"+first + "' AND s.last_name='"+last + "' ";
-				System.out.println(more);
+		String more = getFN(inp);
+		try {
+			ResultSet result = select
+					.executeQuery("SELECT sm.movie_id, m.title, m.year, m.director, m.banner_url, m.trailer_url "
+							+ " FROM movies m, stars s, " + "stars_in_movies sm "
+							+ "WHERE s.id=sm.star_id AND m.id=sm.movie_id " + more + "ORDER BY sm.movie_id;");
+			StringBuilder output = new StringBuilder();
+
+			while (result.next()) {
+				output.append("Movie Id: " + result.getInt(1) + "\n");
+				output.append("Title: " + result.getString(2) + "\n");
+				output.append("Year: " + result.getString(3) + "\n");
+				output.append("Director: " + result.getString(4) + "\n");
+				output.append("Banner URL: " + result.getString(5) + "\n");
+				output.append("Trailer URL: " + result.getString(5) + "\n");
+				output.append("=======================\n");
+
 			}
-			
+			String outputStr = output.toString();
+			if (outputStr.length() > 0 && outputStr != null)
+				return "Movies appeared in\n=====================\n" + outputStr;
+			else
+				return ("\n=============================\nThe person could not be found\n=============================\n");
+
+		} catch (SQLException e) {
+			System.out.println(
+					"\n=============================\nThe person could not be found\n=============================\n");
+			return "";
 		}
-		ResultSet result = select.executeQuery(
-				"SELECT sm.movie_id, m.title, m.year, m.director, m.banner_url, m.trailer_url "
-						+ " FROM movies m, stars s, "+"stars_in_movies sm "
-						+"WHERE s.id=sm.star_id AND m.id=sm.movie_id " + more
-						+"ORDER BY sm.movie_id;");
-		StringBuilder output = new StringBuilder();
-		
-		while (result.next()) {
-			output.append("Movie Id: " + result.getInt(1)+"\n");
-			output.append("Title: " + result.getString(2) +"\n");
-			output.append("Year: " + result.getString(3)+"\n");
-			output.append("Director: " + result.getString(4)+"\n");
-			output.append("Banner URL: " + result.getString(5)+"\n");
-			output.append("Trailer URL: " + result.getString(5)+"\n");
-			output.append("=======================\n");
+
+	}
+
+	private static String getFN(String inp) {
+		String out = "";
+		if (inp.matches("^-?\\d+$")) {
+			// System.out.println("......"+inp);
+			out = "AND s.id=" + inp + " ";
+		} else {
+			String[] splt = inp.split(" ");
+
+			if (splt.length == 0)
+				out = "";
+			else if (splt.length == 1)
+				out = "AND s.first_name=" + splt[0] + " ";
+			else if (splt.length == 2)
+				out = "AND s.first_name=" + splt[0] + " AND s.last_name=" + splt[1] + " ";
+			else {
+				// for(int i=1;i<splt.length-1;++i)
+				// {
+				// more+="AND
+				// (s.first_name="+Arrays.toString(Arrays.copyOfRange(splt,0,i))
+				// +
+				// " AND
+				// s.last_name="+Arrays.toString(Arrays.copyOfRange(splt,i,splt.length))
+				// + ") OR";
+				// }
+				System.out.println("Something went wrong. Please enter the First Name and Last Name Sepeartely: ");
+				Scanner a = new Scanner(System.in);
+				System.out.println("First Name: ");
+				String first = a.nextLine();
+
+				System.out.println("Last Name: ");
+				String last = a.nextLine();
+
+				out = "AND s.first_name='" + first + "' AND s.last_name='" + last + "' ";
+
+			}
 
 		}
+		return out;
+	}
+
+	public static void insertStar(Connection connection) throws SQLException {
+		/*
+		 * first_name VARCHAR(50) DEFAULT '' NOT NULL, last_name VARCHAR(50)
+		 * DEFAULT '' NOT NULL, dob DATE, photo_url VARCHAR(200)
+		 */
+		boolean lookingForName = true;
+		Scanner sc = new Scanner(System.in);
 		
-		return "Movies appeared in\n=====================\n"+output.toString();
+		ArrayList<String> cols=new ArrayList<String>();
+		
+		cols.add("first_name");
+		cols.add("last_name");
+		
+		
+		ArrayList<Object> inputs=new ArrayList<Object>();
+		
+		
+		
+		while (lookingForName) {
+			System.out.println("Enter the Star's Name <First> <Last>: ");
+			
+			String inp = sc.nextLine();
+			String[] splt = inp.split(" ");
+
+			String fn = "";
+			String ln = "";
+			
+			
+			if (splt.length == 0)
+				System.out.println("This name is empty...");
+			else if (splt.length == 1) {
+				lookingForName = false;
+				ln = splt[0];
+			} else if (splt.length == 2)
+			{
+				fn = splt[0];
+				ln= splt[1];
+				lookingForName = false;
+			}
+			else
+			{
+				
+				fn = splt[0];
+				ln=splt[1];
+				for(int i=2; i<splt.length;++i)
+					ln+=" "+splt[i];
+				
+				lookingForName = false;
+				System.out.println("Defaulting to... \n<First Name>: " + fn +"\n<Last Name>: "+ln);
+			}
+			
+			
+			inputs.add(fn);
+			inputs.add(ln);
+			
+		}
+		//END OF NAME
+		
+		
+		
+		
+		
+		System.out.print("Enter Date of Birth (DD/MM/YYYY)<Optional. Press Enter to skip>: ");
+		
+		String date="";
+		java.sql.Date sqlDate = null;
+	    java.util.Date theDate = null;
+	    try {
+	        theDate = new SimpleDateFormat("ddMMyyyy").parse(sc.nextLine().replaceAll("/", ""));
+	        sqlDate= new java.sql.Date(theDate.getTime());
+	        date=sqlDate.toString();
+	        inputs.add(date);
+	        cols.add("dob");
+			
+	        
+	    } catch (ParseException e) {
+	        System.out.println("Improper Format... Skipping");
+	    }
+	    System.out.print("Enter photo url <Optional. Press Enter to skip>: ");
+		String photoUrl=sc.nextLine();
+		if(photoUrl!="")
+		{
+			inputs.add(photoUrl);
+			cols.add("photo_url");
+		}
+		insert(connection, "stars", cols.toArray(new String[cols.size()]), inputs.toArray(new Object[cols.size()]));
+	}
+
+	public static String joinCols(String[] inp) {
+		StringBuilder sb = new StringBuilder();
+		for (String n : inp) {
+			if (sb.length() > 0)
+				sb.append(',');
+			sb.append("").append(n).append("");
+		}
+		return sb.toString();
+	}
+
+	public static String joinObject(Object[] inp) {
+		StringBuilder sb = new StringBuilder();
+		for (Object n : inp) {
+			if (sb.length() > 0)
+				sb.append(',');
+			if (n instanceof String)
+				sb.append("'").append(n).append("'");
+			else
+				sb.append(n);
+		}
+		return sb.toString();
+	}
+
+	public static int insert(Connection connection, String table_name, String[] cols, Object[] entries)
+			throws SQLException {
+		try {
+			String colName = " ";
+			String entry = " ";
+			if (cols != null && cols.length != 0) {
+				colName = " (" + joinCols(cols) + ")";
+
+			}
+			if (entries != null && entries.length != 0) {
+				entry = "(" + joinObject(entries) + ")";
+
+			}
+			System.out.println(colName);
+			System.out.println(entry);
+			System.out.println("INSERT INTO " + table_name + colName + " VALUES " + entry + ";");
+			Statement insert = connection.createStatement();
+			return insert.executeUpdate("INSERT INTO " + table_name + colName + " VALUES " + entry + ";");
+
+		} catch (SQLException e) {
+			System.out.println("Improper Entry: " + e);
+			return -1;
+		}
+
 	}
 
 	public static void main(String[] arg) throws Exception {
-
+		String dbName = "moviedb";
+		if (arg.length == 0) {
+			System.out.println("No Command Arguments Given... Defaulting to moviedb");
+		} else {
+			dbName = arg[0];
+		}
 		// Incorporate mySQL driver
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 
@@ -90,17 +290,41 @@ public class JDBC {
 
 				}
 
-				reader.reset();
+				
 				try {
+					Console cnsl = null;
+					String user = null;
+					String pass = null;
+					try {
+						// creates a console object
+						cnsl = System.console();
 
-					System.out.println("User Name: ");
+						// if console is not null
+						if (cnsl != null) {
 
-					String user = reader.next();
-					reader.nextLine();
-					System.out.println("Password: ");
-					String pass = reader.nextLine();
+							// read line from the user input
+							user = cnsl.readLine("Name: ");
+
+							// read password into the char array
+							pass = new String(cnsl.readPassword("Enter Password: "));
+
+						} else {
+							System.out.println("NO CONSOLE FOUND DEFAULTING TO SCANNER...");
+							System.out.println("User Name: ");
+
+							user = reader.next();
+							reader.nextLine();
+							System.out.println("Password: ");
+
+							pass = reader.nextLine();
+						}
+					} catch (Exception ex) {
+
+						System.out.println("ERROR");
+					}
+
 					// Connect to the test database
-					connection = DriverManager.getConnection("jdbc:mysql:///moviedb", user, pass);
+					connection = DriverManager.getConnection("jdbc:mysql:///" + dbName, user, pass);
 					loggedIn = true;
 
 				} catch (SQLException e) {
@@ -131,11 +355,17 @@ public class JDBC {
 					System.out.println("Enter Name or ID of Star: ");
 
 					String inp = reader.nextLine();
-					
+
 					System.out.println(getMovies(inp, connection).toString());
 					break;
 				case 2:
-
+					/*
+					insert(connection, "customers",
+							new String[] { "first_name", "last_name", "cc_id", "address", "email", "password" },
+							new Object[] { "Ben", "Stined", "872002", "123 Alpine way. Montebello, CA, 91456",
+									"Bstine@mail.com", "password2" });
+									*/
+					insertStar(connection);
 					break;
 				case 3:
 

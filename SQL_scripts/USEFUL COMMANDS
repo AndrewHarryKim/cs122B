@@ -1,0 +1,2 @@
+java -classpath .:/Users/andrewkim/Documents/cs122b/JDBC/mysql-connector-java-5.0.8/mysql-connector-java-5.0.8-bin.jar JDBC
+

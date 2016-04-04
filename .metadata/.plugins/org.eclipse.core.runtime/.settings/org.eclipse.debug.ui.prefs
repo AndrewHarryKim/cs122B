@@ -8,5 +8,6 @@ org.eclipse.debug.ui.consoleBackground=53,53,53
 org.eclipse.debug.ui.errorColor=235,20,80
 org.eclipse.debug.ui.inColor=185,222,10
 org.eclipse.debug.ui.outColor=244,244,244
+pref_state_memento.org.eclipse.debug.ui.VariableView=<?xml version\="1.0" encoding\="UTF-8"?>\n<VariablesViewMemento org.eclipse.debug.ui.SASH_DETAILS_PART\="315" org.eclipse.debug.ui.SASH_VIEW_PART\="684">\n<PRESENTATION_CONTEXT_PROPERTIES IMemento.internal.id\="org.eclipse.debug.ui.VariableView"/>\n</VariablesViewMemento>
 preferredDetailPanes=DefaultDetailPane\:DefaultDetailPane|
 preferredTargets=default\:default|
