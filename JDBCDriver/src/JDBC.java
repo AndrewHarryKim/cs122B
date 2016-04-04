@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class JDBC {
+	 static DatabaseMetaData metadata = null;
+
 	// public static void insertPerson(int type)
 	// {
 	//
@@ -123,7 +125,164 @@ public class JDBC {
 		}
 		return out;
 	}
+	private static void insertCustomer(Connection connection) throws SQLException {
+		/*
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	first_name VARCHAR(50) DEFAULT '' NOT NULL,
+	last_name VARCHAR(50) DEFAULT '' NOT NULL,
+	cc_id VARCHAR(20) DEFAULT '' NOT NULL,
+	address VARCHAR(200) DEFAULT '' NOT NULL,
+	email VARCHAR(50) DEFAULT '' NOT NULL,
+	password VARCHAR(20) DEFAULT '' NOT NULL,
+	FOREIGN KEY(cc_id) REFERENCES creditcards(id)
+		 */
+		boolean lookingForName = true;
+		Scanner sc = new Scanner(System.in);
+		
+		ArrayList<String> cols=new ArrayList<String>();
+		ArrayList<Object> inputs=new ArrayList<Object>();
+			
+		cols.add("first_name");
+		cols.add("last_name");
+		while (lookingForName) {
+			System.out.println("Enter the Customer's Name <First> <Last>: ");
+			
+			String inp = sc.nextLine();
+			String[] splt = inp.split(" ");
 
+			String fn = "";
+			String ln = "";
+			
+			
+			if (splt.length == 0)
+				System.out.println("This name is empty...");
+			else if (splt.length == 1) {
+				lookingForName = false;
+				ln = splt[0];
+			} else if (splt.length == 2)
+			{
+				fn = splt[0];
+				ln= splt[1];
+				lookingForName = false;
+			}
+			else
+			{
+				
+				fn = splt[0];
+				ln=splt[1];
+				for(int i=2; i<splt.length;++i)
+					ln+=" "+splt[i];
+				
+				lookingForName = false;
+				System.out.println("Defaulting to... \n<First Name>: " + fn +"\n<Last Name>: "+ln);
+			}
+			
+			
+			inputs.add(fn);
+			inputs.add(ln);
+			
+		}
+		//END OF NAME
+		
+		
+		
+		
+		
+		
+		boolean gettingCC=true;
+		String cc_id="";
+		while (gettingCC)
+		{
+			cc_id="";
+		   try{
+			   System.out.print("Enter the Credit-Card Number: ");
+		    	cc_id=sc.nextLine();
+		    	//cc_id.replaceAll("[^A-Za-z0-9]", "");
+		    	
+		    	if(cc_id.equals(""))
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	Statement select = connection.createStatement();
+		    	ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
+		    	
+		    	result.next();
+		    	System.out.println("The number of cards found: "+result.getInt(1));
+		    	if(result.getInt(1)==0)
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	else
+		    	{
+		    		gettingCC=false;
+		    	}
+		   }
+		   catch(BadCCNumberException e)
+		   {
+			  System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
+			  cc_id="";
+		   }
+		   catch (SQLException e) {
+			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
+			   cc_id="";
+		   }
+		}
+		inputs.add(cc_id);
+        cols.add("cc_id");
+		
+        boolean needAddress = true;
+        while(needAddress)
+        {
+		    System.out.print("Enter address <Not Optional>: ");
+			String address=sc.nextLine();
+			if(address!=null && !address.equals("") && address.length()>0 && address.length()<=200)
+			{
+				inputs.add(address);
+				cols.add("address");
+				needAddress=false;
+			}
+			else
+			{
+				System.out.println("Invalid Address! Re-Enter it...");
+			}
+			
+        }
+        
+        boolean needEmail = true;
+        while(needEmail)
+        {
+		    System.out.print("Enter Customer Email <Not Optional>: ");
+			String email=sc.nextLine();
+			if(email!=null && !email.equals("") && email.length()>0 && email.length()<=50)
+			{
+				inputs.add(email);
+				cols.add("email");
+				needEmail=false;
+			}
+			else
+			{
+				System.out.println("Invalid Email! Re-Enter it...");
+			}
+			
+        }
+        boolean needPassword = true;
+        while(needPassword)
+        {
+		    System.out.print("Enter Customer Password <Not Optional>: ");
+			String password=sc.nextLine();
+			if(password!=null && !password.equals("") && password.length()>0 && password.length()<=50)
+			{
+				inputs.add(password);
+				cols.add("password");
+				needPassword=false;
+			}
+			else
+			{
+				System.out.println("Invalid password! Re-Enter it...");
+			}
+			
+        }
+		
+		
+		insert(connection, "customers", cols.toArray(new String[cols.size()]), inputs.toArray(new Object[cols.size()]));
+		
+	}
 	public static void insertStar(Connection connection) throws SQLException {
 		/*
 		 * first_name VARCHAR(50) DEFAULT '' NOT NULL, last_name VARCHAR(50)
@@ -200,18 +359,72 @@ public class JDBC {
 			
 	        
 	    } catch (ParseException e) {
-	        System.out.println("Improper Format... Skipping");
+	        System.out.println("Improper Format or Empty... Skipping");
 	    }
 	    System.out.print("Enter photo url <Optional. Press Enter to skip>: ");
 		String photoUrl=sc.nextLine();
-		if(photoUrl!="")
+		if(photoUrl!=null && photoUrl!="" && photoUrl.length()>0)
 		{
 			inputs.add(photoUrl);
 			cols.add("photo_url");
 		}
+		else
+		{
+			System.out.println("Null or Empty URL... Skipping");
+		}
+		
 		insert(connection, "stars", cols.toArray(new String[cols.size()]), inputs.toArray(new Object[cols.size()]));
 	}
+	
+	private static void deleteCustomer(Connection connection) throws SQLException {
+		Scanner sc=new Scanner(System.in);
+		boolean gettingCC=true;
+		String cc_id="";
+		while (gettingCC)
+		{
+			cc_id="";
+		   try{
+			   System.out.print("Enter the Credit-Card Number of Customer(s) to remove: ");
+		    	
+				cc_id=sc.nextLine();
+		    	//cc_id.replaceAll("[^A-Za-z0-9]", "");
+		    	
+		    	if(cc_id.equals(""))
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	Statement select = connection.createStatement();
+		    	ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
+		    	
+		    	result.next();
+		    	System.out.println("The number of cards found: "+result.getInt(1));
+		    	if(result.getInt(1)==0)
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	else
+		    	{
+		    		result=select.executeQuery("SELECT id,first_name,last_name FROM creditcards WHERE id="+ cc_id +";");
+		    		System.out.println("Customers Removed:");
+		    		while (result.next()) {
+						System.out.println("Id = " + result.getInt(1));
+						System.out.println("Name = " + result.getString(2) +" "+ result.getString(3));
+						
+						System.out.println();
 
+					}
+		    		gettingCC=false;
+		    	}
+		   }
+		   catch(BadCCNumberException e)
+		   {
+			  System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
+			  cc_id="";
+		   }
+		   catch (SQLException e) {
+			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
+			   cc_id="";
+		   }
+		}
+		
+		delete(connection, "customers", new String[]{"cc_id="+"'"+ cc_id+"'"});
+	}
 	public static String joinCols(String[] inp) {
 		StringBuilder sb = new StringBuilder();
 		for (String n : inp) {
@@ -234,7 +447,6 @@ public class JDBC {
 		}
 		return sb.toString();
 	}
-
 	public static int insert(Connection connection, String table_name, String[] cols, Object[] entries)
 			throws SQLException {
 		try {
@@ -260,7 +472,67 @@ public class JDBC {
 		}
 
 	}
+	public static int delete(Connection connection, String table_name, String[] args)
+			throws SQLException {
+		try {
+			String theArgs = " 1=1 ";
+			
+			
+			if (args != null && args.length != 0) {
+				theArgs = args[0];
+				for(int i=1;args.length>i;++i)				
+					theArgs+= " AND "+args[i];
+				
 
+			}
+			
+			
+			System.out.println("DELETE FROM "+table_name+" WHERE "+theArgs+";");
+			Statement delete = connection.createStatement();
+			return delete.executeUpdate("DELETE FROM "+table_name+" WHERE "+theArgs+";");
+
+		} catch (SQLException e) {
+			System.out.println("Improper Entry: " + e);
+			return -1;
+		}
+
+	}
+	public static ArrayList getTablesMetadata() throws SQLException {
+		String table[] = { "TABLE" };
+		ResultSet rs = null;
+		ArrayList<String> tables = null;
+		// receive the Type of the object in a String array.
+		rs = metadata.getTables(null, null, null, table);
+		tables = new ArrayList<String>();
+		while (rs.next()) {
+			tables.add(rs.getString("TABLE_NAME"));
+		}
+		return tables;
+	}
+
+	/**
+	 * Prints in the console the columns metadata, based in the Arraylist of
+	 * tables passed as parameter.
+	 * 
+	 * @param tables
+	 * @throws SQLException
+	 */
+	public static void getColumnsMetadata(ArrayList<String> tables)
+			throws SQLException {
+		ResultSet rs = null;
+		// Print the columns properties of the actual table
+		for (String actualTable : tables) {
+			rs = metadata.getColumns(null, null, actualTable, null);
+			System.out.println(actualTable.toUpperCase());
+			while (rs.next()) {
+				System.out.println(rs.getString("COLUMN_NAME") + " "
+						+ rs.getString("TYPE_NAME") + " "
+						+ rs.getString("COLUMN_SIZE"));
+			}
+			System.out.println("\n");
+		}
+
+	}
 	public static void main(String[] arg) throws Exception {
 		String dbName = "moviedb";
 		if (arg.length == 0) {
@@ -368,16 +640,17 @@ public class JDBC {
 					insertStar(connection);
 					break;
 				case 3:
-
+					insertCustomer(connection);
 					break;
 				case 4:
-
+					deleteCustomer(connection);
 					break;
 				case 5:
-
+					 metadata = connection.getMetaData();
+					getColumnsMetadata(getTablesMetadata());
 					break;
 				case 6:
-
+					
 					break;
 				case 7:
 					System.out.print("Logging off...");
@@ -419,4 +692,8 @@ public class JDBC {
 			}
 		}
 	}
+
+
+
+	
 }
