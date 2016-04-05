@@ -425,6 +425,42 @@ public class JDBC {
 		
 		delete(connection, "customers", new String[]{"cc_id="+"'"+ cc_id+"'"});
 	}
+		public static void executeSQLCommand(Connection connection, String SQLCommand) throws SQLException {
+		String[] command = SQLCommand.split(" ");
+		Statement stmt;
+		ResultSet rs;
+		ResultSetMetaData rsmd;
+		int rowsEffected;
+		
+		try {
+			stmt = connection.createStatement();
+			if(command.length >= 1)
+			{
+				if(command[0].toLowerCase().equals("select"))
+				{
+					rs = stmt.executeQuery(SQLCommand);
+					rsmd = rs.getMetaData();
+					int numOfCols = rsmd.getColumnCount();
+					while (rs.next()) {
+				        for (int i = 1; i <= numOfCols; i++) {
+				            if (i > 1) System.out.print(",  \t");
+				            String columnValue = rs.getString(i);
+				            System.out.print(rsmd.getColumnName(i) + " " + columnValue);
+				        }
+				        System.out.println("");
+				    }
+				}
+				else
+				{
+					rowsEffected = stmt.executeUpdate(SQLCommand);
+					System.out.println("Rows effected: " + rowsEffected);
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println("bad mySQL syntax");
+		}
+		
+	}
 	public static String joinCols(String[] inp) {
 		StringBuilder sb = new StringBuilder();
 		for (String n : inp) {
@@ -650,6 +686,9 @@ public class JDBC {
 					getColumnsMetadata(getTablesMetadata());
 					break;
 				case 6:
+					System.out.println("Enter command all on one line: \n");
+					String SQLCommand = reader.nextLine();
+					executeSQLCommand(connection, SQLCommand);
 					
 					break;
 				case 7:
