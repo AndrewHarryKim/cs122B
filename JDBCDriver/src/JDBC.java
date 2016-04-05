@@ -383,6 +383,8 @@ public class JDBC {
 		while (gettingCC)
 		{
 			cc_id="";
+			Statement select = null;
+			ResultSet results = null;
 		   try{
 			   System.out.print("Enter the Credit-Card Number of Customer(s) to remove: ");
 		    	
@@ -391,8 +393,8 @@ public class JDBC {
 		    	
 		    	if(cc_id.equals(""))
 		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
-		    	Statement select = connection.createStatement();
-		    	ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
+		    	select = connection.createStatement();
+		    	result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
 		    	
 		    	result.next();
 		    	System.out.println("The number of cards found: "+result.getInt(1));
@@ -421,14 +423,20 @@ public class JDBC {
 			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			   cc_id="";
 		   }
+		   finally{
+		   if(select != null)
+			   select.close();
+		   if(result != null)
+			   result.close();
+		   }
 		}
 		
 		delete(connection, "customers", new String[]{"cc_id="+"'"+ cc_id+"'"});
 	}
-		public static void executeSQLCommand(Connection connection, String SQLCommand) throws SQLException {
+	public static void executeSQLCommand(Connection connection, String SQLCommand) throws SQLException {
 		String[] command = SQLCommand.split(" ", 2);
-		Statement stmt;
-		ResultSet rs;
+		Statement stmt = null;
+		ResultSet rs = null;
 		ResultSetMetaData rsmd;
 		int rowsEffected;
 		
@@ -458,6 +466,12 @@ public class JDBC {
 			}
 		} catch (SQLException e) {
 			System.out.println("bad mySQL syntax");
+		}
+		finally{
+			if(stmt != null)
+				stmt.close();
+			if(rs != null)
+				rs.close();
 		}
 		
 	}
