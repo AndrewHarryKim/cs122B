@@ -97,7 +97,7 @@ public class JDBC {
 			if (splt.length == 0)
 				out = "";
 			else if (splt.length == 1)
-				out = "AND s.first_name= '" + splt[0] + "' ";
+				out = "AND (s.first_name= '" + splt[0] + "' OR s.last_name= '" + splt[0] + "') ";
 			else if (splt.length == 2)
 				out = "AND s.first_name= '" + splt[0] + "' AND s.last_name= '" + splt[1] + "' ";
 			else {
