@@ -202,7 +202,7 @@ public class JDBC {
 		    	if(cc_id.equals(""))
 		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
 		    	Statement select = connection.createStatement();
-		    	ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
+		    	ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id= '"+ cc_id +"';");
 		    	
 		    	result.next();
 		    	System.out.println("The number of cards found: "+result.getInt(1));
