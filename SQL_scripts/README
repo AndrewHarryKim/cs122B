@@ -1,0 +1,32 @@
+====READ ME====
+	These are some helpful commands that will be useful.
+
+===Some book keeping stuff===
+1)Check if hostname run
+
+	hostname
+	hostname -f
+2)Update your system:
+	sudo apt-get update
+	sudo apt-get upgrade
+
+===Installing MySQL===
+
+1)Install MySQL
+	sudo apt-get install mysql-server
+2)Harden Server <OPTIONAL BUT SUGGESTED> 
+	sudo mysql_secure_installation
+3)Login as root	
+	mysql -u root -p
+4)Create the tables
+	mysql -u root -p <  createtable.sql;
+
+===Installing Apache===
+	sudo apt-get install apache2
+
+==Run the Java==
+1) Compile
+	javac [java file]
+2) Run w/ class paths.
+	java -classpath .:[.../mysql-connector-java-5.0.8-bin.jar Directory] JDBC
+
