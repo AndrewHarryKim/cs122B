@@ -426,7 +426,7 @@ public class JDBC {
 		delete(connection, "customers", new String[]{"cc_id="+"'"+ cc_id+"'"});
 	}
 		public static void executeSQLCommand(Connection connection, String SQLCommand) throws SQLException {
-		String[] command = SQLCommand.split(" ");
+		String[] command = SQLCommand.split(" ", 2);
 		Statement stmt;
 		ResultSet rs;
 		ResultSetMetaData rsmd;
