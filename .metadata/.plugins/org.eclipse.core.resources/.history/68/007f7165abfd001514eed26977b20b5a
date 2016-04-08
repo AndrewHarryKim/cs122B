@@ -73,7 +73,7 @@ public class JDBC {
 
 			}
 			String outputStr = output.toString();
-			if (outputStr.length() >= 0 && outputStr != null)
+			if (outputStr.length() > 0 && outputStr != null)
 				return "Movies appeared in\n=====================\n" + outputStr;
 			else
 				return ("\n=============================\nThe person could not be found\n=============================\n");
@@ -394,19 +394,19 @@ public class JDBC {
 		    	if(cc_id.equals(""))
 		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
 		    	select = connection.createStatement();
-		    	results = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
+		    	result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
 		    	
-		    	results.next();
-		    	System.out.println("The number of cards found: "+results.getInt(1));
-		    	if(results.getInt(1)==0)
+		    	result.next();
+		    	System.out.println("The number of cards found: "+result.getInt(1));
+		    	if(result.getInt(1)==0)
 		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
 		    	else
 		    	{
-		    		results=select.executeQuery("SELECT id,first_name,last_name FROM creditcards WHERE id="+ cc_id +";");
+		    		result=select.executeQuery("SELECT id,first_name,last_name FROM creditcards WHERE id="+ cc_id +";");
 		    		System.out.println("Customers Removed:");
-		    		while (results.next()) {
-						System.out.println("Id = " + results.getInt(1));
-						System.out.println("Name = " + results.getString(2) +" "+ results.getString(3));
+		    		while (result.next()) {
+						System.out.println("Id = " + result.getInt(1));
+						System.out.println("Name = " + result.getString(2) +" "+ result.getString(3));
 						
 						System.out.println();
 
@@ -416,18 +416,18 @@ public class JDBC {
 		   }
 		   catch(BadCCNumberException e)
 		   {
-			  System.out.println("BadCCNumberException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			  System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			  cc_id="";
 		   }
 		   catch (SQLException e) {
-			   System.out.println("SQLException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			   cc_id="";
 		   }
 		   finally{
 		   if(select != null)
 			   select.close();
-		   if(results != null)
-			   results.close();
+		   if(result != null)
+			   result.close();
 		   }
 		}
 		

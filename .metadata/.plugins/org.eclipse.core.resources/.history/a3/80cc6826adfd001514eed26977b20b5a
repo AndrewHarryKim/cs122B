@@ -416,11 +416,11 @@ public class JDBC {
 		   }
 		   catch(BadCCNumberException e)
 		   {
-			  System.out.println("BadCCNumberException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			  System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			  cc_id="";
 		   }
 		   catch (SQLException e) {
-			   System.out.println("SQLException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			   cc_id="";
 		   }
 		   finally{

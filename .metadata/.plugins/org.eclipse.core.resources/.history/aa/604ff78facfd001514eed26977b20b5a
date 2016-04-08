@@ -73,7 +73,7 @@ public class JDBC {
 
 			}
 			String outputStr = output.toString();
-			if (outputStr.length() >= 0 && outputStr != null)
+			if (outputStr.length() > 0 && outputStr != null)
 				return "Movies appeared in\n=====================\n" + outputStr;
 			else
 				return ("\n=============================\nThe person could not be found\n=============================\n");
@@ -416,11 +416,11 @@ public class JDBC {
 		   }
 		   catch(BadCCNumberException e)
 		   {
-			  System.out.println("BadCCNumberException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			  System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			  cc_id="";
 		   }
 		   catch (SQLException e) {
-			   System.out.println("SQLException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
 			   cc_id="";
 		   }
 		   finally{

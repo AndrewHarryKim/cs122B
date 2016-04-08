@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS stars_in_movies
 	
 	star_id INT NOT NULL,
 	movie_id INT NOT NULL,
-	FOREIGN KEY(star_id) REFERENCES stars(id),
-	FOREIGN KEY(movie_id) REFERENCES movies(id)
+	FOREIGN KEY(star_id) REFERENCES stars(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(movie_id) REFERENCES movies(id) ON UPDATE CASCADE ON DELETE CASCADE
 	
 );
 
@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS genres_in_movies
 	
 	genre_id INT NOT NULL,
 	movie_id INT NOT NULL,
-	FOREIGN KEY(genre_id) REFERENCES genres(id),
-	FOREIGN KEY(movie_id) REFERENCES movies(id)
+	FOREIGN KEY(genre_id) REFERENCES genres(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(movie_id) REFERENCES movies(id) ON UPDATE CASCADE ON DELETE CASCADE
 	
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS customers
 	address VARCHAR(200) DEFAULT '' NOT NULL,
 	email VARCHAR(50) DEFAULT '' NOT NULL,
 	password VARCHAR(20) DEFAULT '' NOT NULL,
-	FOREIGN KEY(cc_id) REFERENCES creditcards(id)
+	FOREIGN KEY(cc_id) REFERENCES creditcards(id) ON UPDATE CASCADE ON DELETE CASCADE
 
 );
 
@@ -82,6 +82,6 @@ CREATE TABLE IF NOT EXISTS sales
 	customer_id INT NOT NULL,
 	movie_id INT NOT NULL,
 	sale_date DATE NOT NULL,
-	FOREIGN KEY(customer_id) REFERENCES customers(id),
-	FOREIGN KEY(movie_id) REFERENCES movies(id)
+	FOREIGN KEY(customer_id) REFERENCES customers(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(movie_id) REFERENCES movies(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
