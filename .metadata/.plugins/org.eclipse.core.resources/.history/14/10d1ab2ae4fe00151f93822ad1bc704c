@@ -607,7 +607,7 @@ public class JDBC {
 					System.out.println(getMovies(inp, connection).toString());
 					break;
 				case 2:
-					/* 
+					/*
 					 * insert(connection, "customers", new String[] {
 					 * "first_name", "last_name", "cc_id", "address", "email",
 					 * "password" }, new Object[] { "Ben", "Stined", "872002",

@@ -12,21 +12,56 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class JDBC {
-	static DatabaseMetaData metadata = null;
+	 static DatabaseMetaData metadata = null;
 
-	 
-	// This function will get the movies that someone is given a String. This will be either, an id or FN and LN.
+	// public static void insertPerson(int type)
+	// {
+	//
+	// switch (type) {
+	// case 1:
+	// insertPerson("movies");
+	// break;
+	// case 2:
+	// insertPerson("stars");
+	// break;
+	// case 3:
+	// insertPerson("stars_in_movies");
+	// break;
+	// case 4:
+	// insertPerson("genres");
+	// break;
+	// case 5:
+	// insertPerson("genres_in_movies");
+	// break;
+	// case 6:
+	// insertPerson("creditcards");
+	// break;
+	// case 7:
+	// insertPerson("customers");
+	// break;
+	// case 8:
+	// insertPerson("sales");
+	// break;
+	// default:
+	// System.out.println("\nPick a valid number...");
+	// break;
+	// }
+	// }
+	// public static void insertPerson(String type)
+	// {
+	// System.out.println("Attempting insert into "+type);
+	//
+	// }
 	public static String getMovies(String inp, Connection connection) throws SQLException {
 		Statement select = connection.createStatement();
 		String more = getFN(inp);
 		try {
-			
 			ResultSet result = select
 					.executeQuery("SELECT sm.movie_id, m.title, m.year, m.director, m.banner_url, m.trailer_url "
 							+ " FROM movies m, stars s, " + "stars_in_movies sm "
 							+ "WHERE s.id=sm.star_id AND m.id=sm.movie_id " + more + "ORDER BY sm.movie_id;");
 			StringBuilder output = new StringBuilder();
-			// Parse the data out to the console
+
 			while (result.next()) {
 				output.append("Movie Id: " + result.getInt(1) + "\n");
 				output.append("Title: " + result.getString(2) + "\n");
@@ -37,46 +72,44 @@ public class JDBC {
 				output.append("=======================\n");
 
 			}
-			
 			String outputStr = output.toString();
-			// This will output when there is anyone found
-			if (outputStr.length() > 0 && outputStr != null)
+			if (outputStr.length() >= 0 && outputStr != null)
 				return "Movies appeared in\n=====================\n" + outputStr;
 			else
-				return ("\n=============================\nThe person was in no Movies or Either was not in the DB\n=============================\n");
+				return ("\n=============================\nThe person could not be found\n=============================\n");
 
-		}
-		// This runs when the SQL fails due to a bad type mismatch
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			System.out.println(
 					"\n=============================\nThe person could not be found\n=============================\n");
 			return "";
 		}
 
 	}
-	// This will be given an input field return the 'WHERE' portion of a Name Lookup
+
 	private static String getFN(String inp) {
 		String out = "";
-		//This is to check if it is a Num or ID
 		if (inp.matches("^-?\\d+$")) {
 			// System.out.println("......"+inp);
 			out = "AND s.id=" + inp + " ";
-			
-		}
-		// This works iff the input is a string
-		else 
-		{
+		} else {
 			String[] splt = inp.split(" ");
 
-			if (splt.length == 0) // A null/ empty case.
+			if (splt.length == 0)
 				out = "";
-			else if (splt.length == 1) // When the input is just a LN or FN
-				
+			else if (splt.length == 1)
 				out = "AND (s.first_name= '" + splt[0] + "' OR s.last_name= '" + splt[0] + "') ";
-			else if (splt.length == 2) // Wehn a proper name is entered
+			else if (splt.length == 2)
 				out = "AND s.first_name= '" + splt[0] + "' AND s.last_name= '" + splt[1] + "' ";
 			else {
-				// For strange inputs
+				// for(int i=1;i<splt.length-1;++i)
+				// {
+				// more+="AND
+				// (s.first_name="+Arrays.toString(Arrays.copyOfRange(splt,0,i))
+				// +
+				// " AND
+				// s.last_name="+Arrays.toString(Arrays.copyOfRange(splt,i,splt.length))
+				// + ") OR";
+				// }
 				System.out.println("Something went wrong. Please enter the First Name and Last Name Sepeartely: ");
 				Scanner a = new Scanner(System.in);
 				System.out.println("First Name: ");
@@ -92,147 +125,164 @@ public class JDBC {
 		}
 		return out;
 	}
-	// Called when you want to enter into the customer table (Inserts)
 	private static void insertCustomer(Connection connection) throws SQLException {
 		/*
-		 * id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, first_name VARCHAR(50)
-		 * DEFAULT '' NOT NULL, last_name VARCHAR(50) DEFAULT '' NOT NULL, cc_id
-		 * VARCHAR(20) DEFAULT '' NOT NULL, address VARCHAR(200) DEFAULT '' NOT
-		 * NULL, email VARCHAR(50) DEFAULT '' NOT NULL, password VARCHAR(20)
-		 * DEFAULT '' NOT NULL, FOREIGN KEY(cc_id) REFERENCES creditcards(id)
+	id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+	first_name VARCHAR(50) DEFAULT '' NOT NULL,
+	last_name VARCHAR(50) DEFAULT '' NOT NULL,
+	cc_id VARCHAR(20) DEFAULT '' NOT NULL,
+	address VARCHAR(200) DEFAULT '' NOT NULL,
+	email VARCHAR(50) DEFAULT '' NOT NULL,
+	password VARCHAR(20) DEFAULT '' NOT NULL,
+	FOREIGN KEY(cc_id) REFERENCES creditcards(id)
 		 */
-		
 		boolean lookingForName = true;
 		Scanner sc = new Scanner(System.in);
-
-		ArrayList<String> cols = new ArrayList<String>();
-		ArrayList<Object> inputs = new ArrayList<Object>();
-
+		
+		ArrayList<String> cols=new ArrayList<String>();
+		ArrayList<Object> inputs=new ArrayList<Object>();
+			
 		cols.add("first_name");
 		cols.add("last_name");
 		while (lookingForName) {
 			System.out.println("Enter the Customer's Name <First> <Last>: ");
-
+			
 			String inp = sc.nextLine();
 			String[] splt = inp.split(" ");
 
 			String fn = "";
 			String ln = "";
-			// This is the Null or empty case
+			
+			
 			if (splt.length == 0)
 				System.out.println("This name is empty...");
 			else if (splt.length == 1) {
-				// When the name is a LN
 				lookingForName = false;
 				ln = splt[0];
-			} else if (splt.length == 2) {
-				// When the input entered is a FN and LN that can be split on
+			} else if (splt.length == 2)
+			{
 				fn = splt[0];
-				ln = splt[1];
+				ln= splt[1];
 				lookingForName = false;
-			} else {
-				// This is the unique case where the FN and LN have more than one space
-				fn = splt[0];
-				ln = splt[1];
-				for (int i = 2; i < splt.length; ++i)
-					ln += " " + splt[i];
-
-				lookingForName = false;
-				System.out.println("Defaulting to... \n<First Name>: " + fn + "\n<Last Name>: " + ln);
 			}
-
+			else
+			{
+				
+				fn = splt[0];
+				ln=splt[1];
+				for(int i=2; i<splt.length;++i)
+					ln+=" "+splt[i];
+				
+				lookingForName = false;
+				System.out.println("Defaulting to... \n<First Name>: " + fn +"\n<Last Name>: "+ln);
+			}
+			
+			
 			inputs.add(fn);
 			inputs.add(ln);
-
+			
 		}
-		// END OF NAME Lookup
-
-		// This will find the CC
-		boolean gettingCC = true;
-		String cc_id = "";
-		while (gettingCC) {
-			cc_id = "";
-			try {
-				System.out.print("Enter the Credit-Card Number: ");
-				cc_id = sc.nextLine();
-				// cc_id.replaceAll("[^A-Za-z0-9]", "");
-				// The user entered a bad CC (Likely not in the DB in this case)
-				if (cc_id.equals(""))
-					throw new BadCCNumberException("BAD CC NUMBER Exception!!! ...");
-				Statement select = connection.createStatement();
-				ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id= '" + cc_id + "';");
-
-				result.next();
-				System.out.println("The number of cards found: " + result.getInt(1));
-				if (result.getInt(1) == 0)
-					throw new BadCCNumberException("BAD CC NUMBER!!! ...");
-				else {
-					gettingCC = false;
-				}
-			} catch (BadCCNumberException e) {
-				System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
-				cc_id = "";
-			} catch (SQLException e) {
-				System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
-				cc_id = "";
-			}
+		//END OF NAME
+		
+		
+		
+		
+		
+		
+		boolean gettingCC=true;
+		String cc_id="";
+		while (gettingCC)
+		{
+			cc_id="";
+		   try{
+			   System.out.print("Enter the Credit-Card Number: ");
+		    	cc_id=sc.nextLine();
+		    	//cc_id.replaceAll("[^A-Za-z0-9]", "");
+		    	
+		    	if(cc_id.equals(""))
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	Statement select = connection.createStatement();
+		    	ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id= '"+ cc_id +"';");
+		    	
+		    	result.next();
+		    	System.out.println("The number of cards found: "+result.getInt(1));
+		    	if(result.getInt(1)==0)
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	else
+		    	{
+		    		gettingCC=false;
+		    	}
+		   }
+		   catch(BadCCNumberException e)
+		   {
+			  System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
+			  cc_id="";
+		   }
+		   catch (SQLException e) {
+			   System.out.println("The Credit Card Entered was either not in the DB or not a real CC Number");
+			   cc_id="";
+		   }
 		}
 		inputs.add(cc_id);
-		cols.add("cc_id");
+        cols.add("cc_id");
 		
-		// START Address search
-		boolean needAddress = true;
-		while (needAddress) {
-			System.out.print("Enter address <Not Optional>: ");
-			String address = sc.nextLine();
-			if (address != null && !address.equals("") && address.length() > 0 && address.length() <= 200) {
+        boolean needAddress = true;
+        while(needAddress)
+        {
+		    System.out.print("Enter address <Not Optional>: ");
+			String address=sc.nextLine();
+			if(address!=null && !address.equals("") && address.length()>0 && address.length()<=200)
+			{
 				inputs.add(address);
 				cols.add("address");
-				needAddress = false;
-			} else {
+				needAddress=false;
+			}
+			else
+			{
 				System.out.println("Invalid Address! Re-Enter it...");
 			}
-
-		}
-		// END Address search
-		
-		// START email search
-		boolean needEmail = true;
-		while (needEmail) {
-			System.out.print("Enter Customer Email <Not Optional>: ");
-			String email = sc.nextLine();
-			if (email != null && !email.equals("") && email.length() > 0 && email.length() <= 50) {
+			
+        }
+        
+        boolean needEmail = true;
+        while(needEmail)
+        {
+		    System.out.print("Enter Customer Email <Not Optional>: ");
+			String email=sc.nextLine();
+			if(email!=null && !email.equals("") && email.length()>0 && email.length()<=50)
+			{
 				inputs.add(email);
 				cols.add("email");
-				needEmail = false;
-			} else {
+				needEmail=false;
+			}
+			else
+			{
 				System.out.println("Invalid Email! Re-Enter it...");
 			}
-
-		}
-		// END email search
-		
-		// START the password request
-		boolean needPassword = true;
-		while (needPassword) {
-			System.out.print("Enter Customer Password <Not Optional>: ");
-			String password = sc.nextLine();
-			if (password != null && !password.equals("") && password.length() > 0 && password.length() <= 50) {
+			
+        }
+        boolean needPassword = true;
+        while(needPassword)
+        {
+		    System.out.print("Enter Customer Password <Not Optional>: ");
+			String password=sc.nextLine();
+			if(password!=null && !password.equals("") && password.length()>0 && password.length()<=50)
+			{
 				inputs.add(password);
 				cols.add("password");
-				needPassword = false;
-			} else {
+				needPassword=false;
+			}
+			else
+			{
 				System.out.println("Invalid password! Re-Enter it...");
 			}
-
-		}
-		// END the password request
+			
+        }
 		
-		// Call method to actually insert
+		
 		insert(connection, "customers", cols.toArray(new String[cols.size()]), inputs.toArray(new Object[cols.size()]));
-
+		
 	}
-
 	public static void insertStar(Connection connection) throws SQLException {
 		/*
 		 * first_name VARCHAR(50) DEFAULT '' NOT NULL, last_name VARCHAR(50)
@@ -240,170 +290,191 @@ public class JDBC {
 		 */
 		boolean lookingForName = true;
 		Scanner sc = new Scanner(System.in);
-
-		ArrayList<String> cols = new ArrayList<String>();
-
+		
+		ArrayList<String> cols=new ArrayList<String>();
+		
 		cols.add("first_name");
 		cols.add("last_name");
-
-		ArrayList<Object> inputs = new ArrayList<Object>();
-
+		
+		
+		ArrayList<Object> inputs=new ArrayList<Object>();
+		
+		
+		
 		while (lookingForName) {
 			System.out.println("Enter the Star's Name <First> <Last>: ");
-
+			
 			String inp = sc.nextLine();
 			String[] splt = inp.split(" ");
 
 			String fn = "";
 			String ln = "";
-
+			
+			
 			if (splt.length == 0)
 				System.out.println("This name is empty...");
 			else if (splt.length == 1) {
 				lookingForName = false;
 				ln = splt[0];
-			} else if (splt.length == 2) {
+			} else if (splt.length == 2)
+			{
 				fn = splt[0];
-				ln = splt[1];
+				ln= splt[1];
 				lookingForName = false;
-			} else {
-
-				fn = splt[0];
-				ln = splt[1];
-				for (int i = 2; i < splt.length; ++i)
-					ln += " " + splt[i];
-
-				lookingForName = false;
-				System.out.println("Defaulting to... \n<First Name>: " + fn + "\n<Last Name>: " + ln);
 			}
-
+			else
+			{
+				
+				fn = splt[0];
+				ln=splt[1];
+				for(int i=2; i<splt.length;++i)
+					ln+=" "+splt[i];
+				
+				lookingForName = false;
+				System.out.println("Defaulting to... \n<First Name>: " + fn +"\n<Last Name>: "+ln);
+			}
+			
+			
 			inputs.add(fn);
 			inputs.add(ln);
-
+			
 		}
-		// END OF NAME
-
+		//END OF NAME
+		
+		
+		
+		
+		
 		System.out.print("Enter Date of Birth (DD/MM/YYYY)<Optional. Press Enter to skip>: ");
-
-		String date = "";
+		
+		String date="";
 		java.sql.Date sqlDate = null;
-		java.util.Date theDate = null;
-		try {
-			theDate = new SimpleDateFormat("ddMMyyyy").parse(sc.nextLine().replaceAll("/", ""));
-			sqlDate = new java.sql.Date(theDate.getTime());
-			date = sqlDate.toString();
-			inputs.add(date);
-			cols.add("dob");
-
-		} catch (ParseException e) {
-			System.out.println("Improper Format or Empty... Skipping");
-		}
-		System.out.print("Enter photo url <Optional. Press Enter to skip>: ");
-		String photoUrl = sc.nextLine();
-		if (photoUrl != null && photoUrl != "" && photoUrl.length() > 0) {
+	    java.util.Date theDate = null;
+	    try {
+	        theDate = new SimpleDateFormat("ddMMyyyy").parse(sc.nextLine().replaceAll("/", ""));
+	        sqlDate= new java.sql.Date(theDate.getTime());
+	        date=sqlDate.toString();
+	        inputs.add(date);
+	        cols.add("dob");
+			
+	        
+	    } catch (ParseException e) {
+	        System.out.println("Improper Format or Empty... Skipping");
+	    }
+	    System.out.print("Enter photo url <Optional. Press Enter to skip>: ");
+		String photoUrl=sc.nextLine();
+		if(photoUrl!=null && photoUrl!="" && photoUrl.length()>0)
+		{
 			inputs.add(photoUrl);
 			cols.add("photo_url");
-		} else {
+		}
+		else
+		{
 			System.out.println("Null or Empty URL... Skipping");
 		}
-
+		
 		insert(connection, "stars", cols.toArray(new String[cols.size()]), inputs.toArray(new Object[cols.size()]));
 	}
-
+	
 	private static void deleteCustomer(Connection connection) throws SQLException {
-		Scanner sc = new Scanner(System.in);
-		boolean gettingCC = true;
-		String cc_id = "";
-		while (gettingCC) {
-			cc_id = "";
+		Scanner sc=new Scanner(System.in);
+		boolean gettingCC=true;
+		String cc_id="";
+		while (gettingCC)
+		{
+			cc_id="";
 			Statement select = null;
 			ResultSet results = null;
-			try {
-				System.out.print("Enter the Credit-Card Number of Customer(s) to remove: ");
-
-				cc_id = sc.nextLine();
-				// cc_id.replaceAll("[^A-Za-z0-9]", "");
-
-				if (cc_id.equals(""))
-					throw new BadCCNumberException("BAD CC NUMBER!!! ...");
-				select = connection.createStatement();
-				results = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id=" + cc_id + ";");
-
-				results.next();
-				System.out.println("The number of cards found: " + results.getInt(1));
-				if (results.getInt(1) == 0)
-					throw new BadCCNumberException("BAD CC NUMBER!!! ...");
-				else {
-					results = select
-							.executeQuery("SELECT id,first_name,last_name FROM creditcards WHERE id=" + cc_id + ";");
-					System.out.println("Customers Removed:");
-					while (results.next()) {
+		   try{
+			   System.out.print("Enter the Credit-Card Number of Customer(s) to remove: ");
+		    	
+				cc_id=sc.nextLine();
+		    	//cc_id.replaceAll("[^A-Za-z0-9]", "");
+		    	
+		    	if(cc_id.equals(""))
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	select = connection.createStatement();
+		    	results = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id="+ cc_id +";");
+		    	
+		    	results.next();
+		    	System.out.println("The number of cards found: "+results.getInt(1));
+		    	if(results.getInt(1)==0)
+		    		throw new BadCCNumberException("BAD CC NUMBER!!! ...");
+		    	else
+		    	{
+		    		results=select.executeQuery("SELECT id,first_name,last_name FROM creditcards WHERE id="+ cc_id +";");
+		    		System.out.println("Customers Removed:");
+		    		while (results.next()) {
 						System.out.println("Id = " + results.getInt(1));
-						System.out.println("Name = " + results.getString(2) + " " + results.getString(3));
-
+						System.out.println("Name = " + results.getString(2) +" "+ results.getString(3));
+						
 						System.out.println();
 
 					}
-					gettingCC = false;
-				}
-			} catch (BadCCNumberException e) {
-				System.out.println(
-						"BadCCNumberException: The Credit Card Entered was either not in the DB or not a real CC Number");
-				cc_id = "";
-			} catch (SQLException e) {
-				System.out.println(
-						"SQLException: The Credit Card Entered was either not in the DB or not a real CC Number");
-				cc_id = "";
-			} finally {
-				if (select != null)
-					select.close();
-				if (results != null)
-					results.close();
-			}
+		    		gettingCC=false;
+		    	}
+		   }
+		   catch(BadCCNumberException e)
+		   {
+			  System.out.println("BadCCNumberException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			  cc_id="";
+		   }
+		   catch (SQLException e) {
+			   System.out.println("SQLException: The Credit Card Entered was either not in the DB or not a real CC Number");
+			   cc_id="";
+		   }
+		   finally{
+		   if(select != null)
+			   select.close();
+		   if(results != null)
+			   results.close();
+		   }
 		}
-
-		delete(connection, "customers", new String[] { "cc_id=" + "'" + cc_id + "'" });
+		
+		delete(connection, "customers", new String[]{"cc_id="+"'"+ cc_id+"'"});
 	}
-
 	public static void executeSQLCommand(Connection connection, String SQLCommand) throws SQLException {
 		String[] command = SQLCommand.split(" ", 2);
 		Statement stmt = null;
 		ResultSet rs = null;
 		ResultSetMetaData rsmd;
 		int rowsEffected;
-
+		
 		try {
 			stmt = connection.createStatement();
-			if (command.length >= 1) {
-				if (command[0].toLowerCase().equals("select")) {
+			if(command.length >= 1)
+			{
+				if(command[0].toLowerCase().equals("select"))
+				{
 					rs = stmt.executeQuery(SQLCommand);
 					rsmd = rs.getMetaData();
 					int numOfCols = rsmd.getColumnCount();
 					while (rs.next()) {
-						for (int i = 1; i <= numOfCols; i++) {
-							if (i > 1)
-								System.out.print(",  \t");
-							String columnValue = rs.getString(i);
-							System.out.print(rsmd.getColumnName(i) + " " + columnValue);
-						}
-						System.out.println("");
-					}
-				} else {
+				        for (int i = 1; i <= numOfCols; i++) {
+				            if (i > 1) System.out.print(",  \t");
+				            String columnValue = rs.getString(i);
+				            System.out.print(rsmd.getColumnName(i) + " " + columnValue);
+				        }
+				        System.out.println("");
+				    }
+				}
+				else
+				{
 					rowsEffected = stmt.executeUpdate(SQLCommand);
 					System.out.println("Rows effected: " + rowsEffected);
 				}
 			}
 		} catch (SQLException e) {
 			System.out.println("bad mySQL syntax");
-		} finally {
-			if (stmt != null)
+		}
+		finally{
+			if(stmt != null)
 				stmt.close();
-			if (rs != null)
+			if(rs != null)
 				rs.close();
 		}
-
+		
 	}
-
 	public static String joinCols(String[] inp) {
 		StringBuilder sb = new StringBuilder();
 		for (String n : inp) {
@@ -426,7 +497,6 @@ public class JDBC {
 		}
 		return sb.toString();
 	}
-
 	public static int insert(Connection connection, String table_name, String[] cols, Object[] entries)
 			throws SQLException {
 		try {
@@ -452,21 +522,24 @@ public class JDBC {
 		}
 
 	}
-
-	public static int delete(Connection connection, String table_name, String[] args) throws SQLException {
+	public static int delete(Connection connection, String table_name, String[] args)
+			throws SQLException {
 		try {
 			String theArgs = " 1=1 ";
-
+			
+			
 			if (args != null && args.length != 0) {
 				theArgs = args[0];
-				for (int i = 1; args.length > i; ++i)
-					theArgs += " AND " + args[i];
+				for(int i=1;args.length>i;++i)				
+					theArgs+= " AND "+args[i];
+				
 
 			}
-
-			System.out.println("DELETE FROM " + table_name + " WHERE " + theArgs + ";");
+			
+			
+			System.out.println("DELETE FROM "+table_name+" WHERE "+theArgs+";");
 			Statement delete = connection.createStatement();
-			return delete.executeUpdate("DELETE FROM " + table_name + " WHERE " + theArgs + ";");
+			return delete.executeUpdate("DELETE FROM "+table_name+" WHERE "+theArgs+";");
 
 		} catch (SQLException e) {
 			System.out.println("Improper Entry: " + e);
@@ -474,7 +547,6 @@ public class JDBC {
 		}
 
 	}
-
 	public static ArrayList getTablesMetadata() throws SQLException {
 		String table[] = { "TABLE" };
 		ResultSet rs = null;
@@ -495,21 +567,22 @@ public class JDBC {
 	 * @param tables
 	 * @throws SQLException
 	 */
-	public static void getColumnsMetadata(ArrayList<String> tables) throws SQLException {
+	public static void getColumnsMetadata(ArrayList<String> tables)
+			throws SQLException {
 		ResultSet rs = null;
 		// Print the columns properties of the actual table
 		for (String actualTable : tables) {
 			rs = metadata.getColumns(null, null, actualTable, null);
 			System.out.println(actualTable.toUpperCase());
 			while (rs.next()) {
-				System.out.println(rs.getString("COLUMN_NAME") + " " + rs.getString("TYPE_NAME") + " "
+				System.out.println(rs.getString("COLUMN_NAME") + " "
+						+ rs.getString("TYPE_NAME") + " "
 						+ rs.getString("COLUMN_SIZE"));
 			}
 			System.out.println("\n");
 		}
 
 	}
-
 	public static void main(String[] arg) throws Exception {
 		String dbName = "moviedb";
 		if (arg.length == 0) {
@@ -539,6 +612,7 @@ public class JDBC {
 
 				}
 
+				
 				try {
 					Console cnsl = null;
 					String user = null;
@@ -607,13 +681,12 @@ public class JDBC {
 					System.out.println(getMovies(inp, connection).toString());
 					break;
 				case 2:
-					/* 
-					 * insert(connection, "customers", new String[] {
-					 * "first_name", "last_name", "cc_id", "address", "email",
-					 * "password" }, new Object[] { "Ben", "Stined", "872002",
-					 * "123 Alpine way. Montebello, CA, 91456",
-					 * "Bstine@mail.com", "password2" });
-					 */
+					/*
+					insert(connection, "customers",
+							new String[] { "first_name", "last_name", "cc_id", "address", "email", "password" },
+							new Object[] { "Ben", "Stined", "872002", "123 Alpine way. Montebello, CA, 91456",
+									"Bstine@mail.com", "password2" });
+									*/
 					insertStar(connection);
 					break;
 				case 3:
@@ -623,14 +696,14 @@ public class JDBC {
 					deleteCustomer(connection);
 					break;
 				case 5:
-					metadata = connection.getMetaData();
+					 metadata = connection.getMetaData();
 					getColumnsMetadata(getTablesMetadata());
 					break;
 				case 6:
 					System.out.println("Enter command all on one line: \n");
 					String SQLCommand = reader.nextLine();
 					executeSQLCommand(connection, SQLCommand);
-
+					
 					break;
 				case 7:
 					System.out.print("Logging off...");
@@ -646,31 +719,34 @@ public class JDBC {
 					break;
 				}
 			}
-//			//
-//			// Create an execute an SQL statement to select all of table"Stars"
-//			// records
-//			Statement select = connection.createStatement();
-//			ResultSet result = select.executeQuery("Select * from stars");
-//
-//			// Get metatdata from stars; print # of attributes in table
-//			System.out.println("The results of the query");
-//			ResultSetMetaData metadata = result.getMetaData();
-//			System.out.println("There are " + metadata.getColumnCount() + "columns");
-//
-//			// Print type of each attribute
-//			for (int i = 1; i <= metadata.getColumnCount(); i++)
-//				System.out.println("Type of column " + i + " is " + metadata.getColumnTypeName(i));
-//
-//			// print table's contents, field by field
-//			while (result.next()) {
-//				System.out.println("Id = " + result.getInt(1));
-//				System.out.println("Name = " + result.getString(2) + result.getString(3));
-//				System.out.println("DOB = " + result.getString(4));
-//				System.out.println("photoURL = " + result.getString(5));
-//				System.out.println();
-//
-//			}
+			//
+			// Create an execute an SQL statement to select all of table"Stars"
+			// records
+			Statement select = connection.createStatement();
+			ResultSet result = select.executeQuery("Select * from stars");
+
+			// Get metatdata from stars; print # of attributes in table
+			System.out.println("The results of the query");
+			ResultSetMetaData metadata = result.getMetaData();
+			System.out.println("There are " + metadata.getColumnCount() + "columns");
+
+			// Print type of each attribute
+			for (int i = 1; i <= metadata.getColumnCount(); i++)
+				System.out.println("Type of column " + i + " is " + metadata.getColumnTypeName(i));
+
+			// print table's contents, field by field
+			while (result.next()) {
+				System.out.println("Id = " + result.getInt(1));
+				System.out.println("Name = " + result.getString(2) + result.getString(3));
+				System.out.println("DOB = " + result.getString(4));
+				System.out.println("photoURL = " + result.getString(5));
+				System.out.println();
+
+			}
 		}
 	}
 
+
+
+	
 }

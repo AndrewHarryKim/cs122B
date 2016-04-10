@@ -92,7 +92,7 @@ public class JDBC {
 		}
 		return out;
 	}
-	// Called when you want to enter into the customer table (Inserts)
+	// Called when you want to enter into the customer table
 	private static void insertCustomer(Connection connection) throws SQLException {
 		/*
 		 * id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, first_name VARCHAR(50)
@@ -156,9 +156,9 @@ public class JDBC {
 				System.out.print("Enter the Credit-Card Number: ");
 				cc_id = sc.nextLine();
 				// cc_id.replaceAll("[^A-Za-z0-9]", "");
-				// The user entered a bad CC (Likely not in the DB in this case)
+
 				if (cc_id.equals(""))
-					throw new BadCCNumberException("BAD CC NUMBER Exception!!! ...");
+					throw new BadCCNumberException("BAD CC NUMBER!!! ...");
 				Statement select = connection.createStatement();
 				ResultSet result = select.executeQuery("SELECT COUNT(*) FROM creditcards WHERE id= '" + cc_id + "';");
 
@@ -179,8 +179,7 @@ public class JDBC {
 		}
 		inputs.add(cc_id);
 		cols.add("cc_id");
-		
-		// START Address search
+
 		boolean needAddress = true;
 		while (needAddress) {
 			System.out.print("Enter address <Not Optional>: ");
@@ -194,9 +193,7 @@ public class JDBC {
 			}
 
 		}
-		// END Address search
-		
-		// START email search
+
 		boolean needEmail = true;
 		while (needEmail) {
 			System.out.print("Enter Customer Email <Not Optional>: ");
@@ -210,9 +207,6 @@ public class JDBC {
 			}
 
 		}
-		// END email search
-		
-		// START the password request
 		boolean needPassword = true;
 		while (needPassword) {
 			System.out.print("Enter Customer Password <Not Optional>: ");
@@ -226,9 +220,7 @@ public class JDBC {
 			}
 
 		}
-		// END the password request
-		
-		// Call method to actually insert
+
 		insert(connection, "customers", cols.toArray(new String[cols.size()]), inputs.toArray(new Object[cols.size()]));
 
 	}
@@ -607,7 +599,7 @@ public class JDBC {
 					System.out.println(getMovies(inp, connection).toString());
 					break;
 				case 2:
-					/* 
+					/*
 					 * insert(connection, "customers", new String[] {
 					 * "first_name", "last_name", "cc_id", "address", "email",
 					 * "password" }, new Object[] { "Ben", "Stined", "872002",
@@ -646,30 +638,30 @@ public class JDBC {
 					break;
 				}
 			}
-//			//
-//			// Create an execute an SQL statement to select all of table"Stars"
-//			// records
-//			Statement select = connection.createStatement();
-//			ResultSet result = select.executeQuery("Select * from stars");
-//
-//			// Get metatdata from stars; print # of attributes in table
-//			System.out.println("The results of the query");
-//			ResultSetMetaData metadata = result.getMetaData();
-//			System.out.println("There are " + metadata.getColumnCount() + "columns");
-//
-//			// Print type of each attribute
-//			for (int i = 1; i <= metadata.getColumnCount(); i++)
-//				System.out.println("Type of column " + i + " is " + metadata.getColumnTypeName(i));
-//
-//			// print table's contents, field by field
-//			while (result.next()) {
-//				System.out.println("Id = " + result.getInt(1));
-//				System.out.println("Name = " + result.getString(2) + result.getString(3));
-//				System.out.println("DOB = " + result.getString(4));
-//				System.out.println("photoURL = " + result.getString(5));
-//				System.out.println();
-//
-//			}
+			//
+			// Create an execute an SQL statement to select all of table"Stars"
+			// records
+			Statement select = connection.createStatement();
+			ResultSet result = select.executeQuery("Select * from stars");
+
+			// Get metatdata from stars; print # of attributes in table
+			System.out.println("The results of the query");
+			ResultSetMetaData metadata = result.getMetaData();
+			System.out.println("There are " + metadata.getColumnCount() + "columns");
+
+			// Print type of each attribute
+			for (int i = 1; i <= metadata.getColumnCount(); i++)
+				System.out.println("Type of column " + i + " is " + metadata.getColumnTypeName(i));
+
+			// print table's contents, field by field
+			while (result.next()) {
+				System.out.println("Id = " + result.getInt(1));
+				System.out.println("Name = " + result.getString(2) + result.getString(3));
+				System.out.println("DOB = " + result.getString(4));
+				System.out.println("photoURL = " + result.getString(5));
+				System.out.println();
+
+			}
 		}
 	}
 
