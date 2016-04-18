@@ -12,11 +12,16 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tomcat.util.log.SystemLogHandler;
+
+import com.sun.rowset.CachedRowSetImpl;
 
 /**
  * Servlet implementation class search
@@ -46,6 +51,7 @@ public class search extends HttpServlet {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
+		CachedRowSetImpl crs = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e1) {
@@ -56,51 +62,54 @@ public class search extends HttpServlet {
 			conn = DriverManager.getConnection(dburl, username, password);
 			
 			stmt = conn.createStatement();
-			
 			PrintWriter out = response.getWriter();
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/search.jsp");
 			if((request.getParameter("name") == "" || request.getParameter("name") == null)&& 
 					(request.getParameter("title") == ""|| request.getParameter("title") == null) && 
 					(request.getParameter("year") == ""|| request.getParameter("year") == null) &&
 					(request.getParameter("director") == ""|| request.getParameter("director") == null))
 			{
-				out.write("<h2>Hello!  Please enter a keyword</h2>");
-				out.write("<input placeholder=\"Movie Title, star name, year, or director \" />");
-				out.write("<input type=\"button\" value=\"submit\">");
+				
+				if(dispatcher == null) 
+				{
+					System.out.println("oh no!");
+				}
+				dispatcher.forward(request, response);
 			}
 			else{
 				rs = stmt.executeQuery("SELECT sm.movie_id, m.title, m.year, m.director, m.banner_url, m.trailer_url "
 						+ " FROM movies m, stars s, " + "stars_in_movies sm "
-						+ "WHERE s.id=sm.star_id AND m.id=sm.movie_id AND (s.last_name='" + request.getParameter("name")
+						+ "WHERE s.id=sm.star_id AND m.id=sm.movie_id AND (s.last_name='" 
+						+ request.getParameter("name")
 						+ "' OR m.director='" + request.getParameter("name")
 						+ "' OR m.title='" + request.getParameter("name")
 						+ "' OR m.year='" + request.getParameter("name")
 						+ "') GROUP BY sm.movie_id " + 
 						"ORDER BY sm.movie_id;");
-				while(rs.next())
-				{
-					out.write(
-							"<p><img src=\"" +rs.getString(5) + "\" alt=\"movieBanner\" />\t" + 
-							rs.getString(2) + "\t" + 
-							rs.getString(3) + "\t" + 
-							rs.getString(4) + "</p>");
-				}
+				crs = new CachedRowSetImpl();
+		        crs.populate(rs);
+		        crs.first();
+				rs.first();
+				request.getSession().setAttribute("rs", crs);
+				dispatcher.include(request, response);
+				request.getSession().setAttribute("rs", null);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
-				if(conn != null)
+				if(rs != null)
 				{
-						conn.close();
+					rs.close();
 				}
 				if(stmt != null)
 				{
 					stmt.close();
 				}
-				if(rs != null)
+				if(conn != null)
 				{
-					rs.close();
+					conn.close();
 				}
 			} catch (SQLException e) 
 			{
