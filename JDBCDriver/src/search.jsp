@@ -7,12 +7,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Search Movies</title>
-<script type="text/javascript" src="js/searchScript.js"></script>
+<link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
-	<h2>Hello!  Please enter a keyword</h2>
-	<input id="dbSearchBox" placeholder="Movie Title, star name, year, or director " />
-	<input type="button" value="submit" onclick="submitSearch()" />
+<%@include file="header.jsp" %>
+	<div class="searchContainer">
+		<input 
+			id="dbSearchBox" 
+			class="dbSearchBox" 
+			placeholder="Movie Title, star name, year, or director " 
+			onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('searchButton').click()" 
+        	/>
+		<input 
+			id="searchButton" 
+			class="searchButton" 
+			type="button" 
+			value="submit" 
+			onclick="submitSearch()" 
+			/>
+	</div>
 	<%CachedRowSetImpl rs = (CachedRowSetImpl)request.getSession().getAttribute("rs"); %>
 	<%if(rs != null) {%>
 		<%while(rs.next()){%>
@@ -22,5 +36,6 @@
 			</p>
 		<% }%>
 	<%} %>
+	<script type="text/javascript" src="js/searchScript.js"></script>
 </body>
 </html>	
