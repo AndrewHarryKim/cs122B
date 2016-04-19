@@ -1,16 +1,12 @@
-
 package com.simple;
-
-import java.io.Console;
-import java.sql.*; // Enable SQL processing
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,25 +15,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import com.sun.rowset.CachedRowSetImpl;
 
 /**
- * Servlet implementation class search
+ * Servlet implementation class MovieList
  */
-@WebServlet("/search")
-public class search extends HttpServlet {
+@WebServlet("/MovieList")
+public class MovieList extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	static String dbname = "moviedb";
 	static String username = "root";
 	static String password = "pops711";
 	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
-
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public search() {
+    public MovieList() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -63,22 +56,37 @@ public class search extends HttpServlet {
 			stmt = conn.createStatement();
 			PrintWriter out = response.getWriter();
 			
-			if((request.getParameter("starname") == "" || request.getParameter("starname") == null) &&
-				(request.getParameter("title") == "" || request.getParameter("title") == null) &&
-				(request.getParameter("director") == "" || request.getParameter("director") == null) &&
-				(request.getParameter("year") == "" || request.getParameter("year") == null))
+			
+			String queryString = "SELECT sm.movie_id, m.title, m.year, m.director, m.banner_url, m.trailer_url "
+					+ " FROM movies m, stars s, " + "stars_in_movies sm "
+					+ "WHERE s.id=sm.star_id AND m.id=sm.movie_id";	
+			if(request.getParameter("starname") != "" && request.getParameter("starname") != null)
 			{
-				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/search.jsp");
-				if(dispatcher == null) 
+				String names[] = request.getParameter("starname").split(" ");
+				if(names.length >= 2)
 				{
-					System.out.println("oh no!");
+					queryString += " AND s.first_name='" + names[0] + "' AND s.last_name='" + names[1] + "' ";
 				}
-				dispatcher.forward(request, response);
+				else
+				{
+					queryString += " AND (s.first_name='" + names[0] + "' OR s.last_name='" + names[0] + "') ";
+				}
 			}
-			else{
-				//RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/MovieList");
-				response.sendRedirect("/FabFlix/MovieList?"+request.getQueryString());
-			}
+			if(request.getParameter("title") != "" && request.getParameter("title") != null)
+				queryString += " AND m.title=\"" + request.getParameter("title") + "\"";
+			if(request.getParameter("director") != "" && request.getParameter("director") != null)
+				queryString += " AND m.director='" + request.getParameter("director") + "'";
+			if(request.getParameter("year") != "" && request.getParameter("year") != null)
+				queryString += " AND m.year='" + request.getParameter("year") + "'";
+			rs = stmt.executeQuery(queryString 
+					+ " GROUP BY sm.movie_id " + 
+					"ORDER BY sm.movie_id;");
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/movie-list.jsp");
+			crs = new CachedRowSetImpl();
+	        crs.populate(rs);
+			request.getSession().setAttribute("rs", crs);
+			dispatcher.include(request, response);
+			request.getSession().setAttribute("rs", null);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

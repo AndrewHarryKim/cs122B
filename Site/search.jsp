@@ -13,9 +13,30 @@
 <%@include file="header.jsp" %>
 	<div class="searchContainer">
 		<input 
-			id="dbSearchBox" 
+			id="nameSearchBox" 
 			class="dbSearchBox" 
-			placeholder="Movie Title, star name, year, or director " 
+			placeholder="Star Name" 
+			onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('searchButton').click()" 
+        	/>
+        <input 
+			id="titleSearchBox" 
+			class="dbSearchBox" 
+			placeholder="Movie Title" 
+			onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('searchButton').click()" 
+        	/>
+        <input 
+			id="directorSearchBox" 
+			class="dbSearchBox" 
+			placeholder="Director Full-Name" 
+			onkeydown = "if (event.keyCode == 13)
+                        document.getElementById('searchButton').click()" 
+        	/>
+        <input 
+			id="yearSearchBox" 
+			class="dbSearchBox" 
+			placeholder="Year of Release" 
 			onkeydown = "if (event.keyCode == 13)
                         document.getElementById('searchButton').click()" 
         	/>
