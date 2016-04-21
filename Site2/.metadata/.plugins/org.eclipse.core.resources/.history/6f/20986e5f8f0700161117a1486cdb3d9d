@@ -1,0 +1,19 @@
+/**
+ * 
+ */
+var search = document.getElementById("dbSearchBox");
+function submitSearch(){
+	var queryString = "";
+	if(search != null)
+	{
+		if(search.value != "")
+		{
+			queryString += "starname=" + starname.value + "&";
+			queryString += "title=" + title.value + "&";
+			queryString += "director=" + director.value + "&";
+			queryString += "year=" + year.value;
+		}
+	}
+	document.location.search = queryString
+	
+};

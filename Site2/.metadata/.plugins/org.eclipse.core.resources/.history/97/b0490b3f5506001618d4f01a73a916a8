@@ -1,0 +1,17 @@
+var name = document.getElementById("dbSearchBox");
+var title = document.getElementById("dbSearchBox");
+var director = document.getElementById("dbSearchBox");
+var year = document.getElementById("dbSearchBox");
+function submitSearch(){
+	var queryString = "";
+	if(name != null)
+		queryString += "name="+name.value + "&";
+	if(title != null)
+		queryString += "title="+title.value + "&";
+	if(director != null)
+		queryString += "director="+director.value + "&";
+	if(year != null)
+		queryString += "year="+year.value;
+	document.location.search = queryString
+	
+};

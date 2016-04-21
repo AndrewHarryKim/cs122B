@@ -1,0 +1,7 @@
+127.0.0.1 - - [17/Apr/2016:15:30:27 -0700] "GET / HTTP/1.1" 404 951
+127.0.0.1 - - [17/Apr/2016:15:30:29 -0700] "GET /FabFlix/search HTTP/1.1" 200 -
+127.0.0.1 - - [17/Apr/2016:15:30:52 -0700] "GET / HTTP/1.1" 404 951
+127.0.0.1 - - [17/Apr/2016:15:30:54 -0700] "GET /FabFlix/search HTTP/1.1" 200 436
+127.0.0.1 - - [17/Apr/2016:15:30:54 -0700] "GET /FabFlix/js/searchScript.js HTTP/1.1" 200 115
+127.0.0.1 - - [17/Apr/2016:15:31:26 -0700] "GET /FabFlix/search HTTP/1.1" 200 434
+127.0.0.1 - - [17/Apr/2016:15:31:26 -0700] "GET /FabFlix/js/searchScript.js HTTP/1.1" 304 -

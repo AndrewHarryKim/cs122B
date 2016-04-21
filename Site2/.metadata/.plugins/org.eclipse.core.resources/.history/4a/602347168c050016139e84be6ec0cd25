@@ -1,0 +1,15 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Search Movies</title>
+<script type="text/javascript" src="js/searchScript.js"></script>
+</head>
+<body>
+	<h2>Hello!  Please enter a keyword</h2>
+	<input id="dbSearchBox" placeholder="Movie Title, star name, year, or director " />
+	<input type="button" value="submit" onclick="submitSearch()" />
+</body>
+</html>	
