@@ -19,4 +19,6 @@
 	String browseTitle="Browse?by=title";
 	// This is the location of the movie-list after you find one.
 	String movieListPath="MovieList";
+	// This is the Cart location.
+	String cartPath="Cart";
 %>

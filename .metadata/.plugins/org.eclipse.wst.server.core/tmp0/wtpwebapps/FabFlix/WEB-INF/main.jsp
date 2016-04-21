@@ -13,7 +13,7 @@
 
 %>
 Welcome to Fabflix, <%=session.getAttribute("first_name")%>
-<a align= "right" href=<%=logoutPath+""%>>Log out</a>
+</br><a align= "right" href=<%=logoutPath+""%>>Log out</a>
 <%
 	out.println("</br>");
     out.println("<a href='"+browseGenre+"'>Browse by Genre</a>");

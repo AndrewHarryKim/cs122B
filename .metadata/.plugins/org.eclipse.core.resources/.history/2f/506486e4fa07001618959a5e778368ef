@@ -1,0 +1,8 @@
+package com.simple;
+
+public class CartList {
+
+	public CartList(CartList obj) {
+
+	}
+}

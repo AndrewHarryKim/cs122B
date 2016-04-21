@@ -1,0 +1,59 @@
+package com.simple;
+
+import java.util.ArrayList;
+
+public class CartList {
+
+	ArrayList<CartItem> cart;
+
+	public CartList(CartList otherCart) {
+		this.cart = otherCart.cart;
+	}
+
+	public CartList() {
+		cart = new ArrayList<CartItem>();
+	}
+
+	public CartList(CartItem item) {
+		cart = new ArrayList<CartItem>();
+		cart.add(item);
+	}
+
+	public int addToCart(CartItem entry) {
+		if (entry == null)
+			return -1;
+
+		return 1;
+
+	}
+
+	public int addToCart(CartList entry) {
+		if (entry == null)
+			return -1;
+		int out = 0;
+		for (CartItem a : entry.cart)
+			out += addToCart(a);
+		return out;
+
+	}
+
+	public int addToCart(ArrayList<CartItem> entry) {
+		if (entry == null)
+			return -1;
+		int out = 0;
+		for (CartItem a : entry)
+			out += addToCart(a);
+		return out;
+
+	}
+	public int findByID(int id)
+	{
+		int index=0;
+		for (CartItem a:cart)
+		{
+			
+		}
+	}
+	
+
+}

@@ -1,0 +1,34 @@
+package com.simple;
+
+public class CartItem {
+	private int movieId;
+	public String title;
+	private String year;
+	private String director;
+	private String banner_url;
+	private String trailer_url;
+/*
+ * 
+id:integer (primary key)
+title:varchar(100) 
+year:integer 
+director:varchar(100) 
+banner_url:varchar(200) 
+trailer_url:varchar(200) 
+ */
+	public CartItem(int movieId, String title, String year, String director, String banner_url,
+			String trailer_url) {
+		this.movieId = movieId;
+		this.title = title;
+		this.year = year;
+		this.director = director;
+		this.banner_url = banner_url;
+		this.trailer_url = trailer_url;
+	}
+
+	public CartItem() {
+		this(0, null, null, null, null, null);
+	}
+
+	
+}

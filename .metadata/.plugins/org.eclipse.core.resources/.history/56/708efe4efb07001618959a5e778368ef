@@ -1,0 +1,22 @@
+package com.simple;
+
+import java.util.ArrayList;
+
+public class CartList {
+
+	ArrayList<CartItem> cart;
+	public CartList(CartList otherCart) {
+		this.cart=otherCart.cart;
+	}
+	public CartList()
+	{
+		cart= new ArrayList<CartItem>();
+	}
+	public int addToCart(CartItem entry)
+	{
+		if(entry==null)
+		return -1;
+		
+	}
+	
+}

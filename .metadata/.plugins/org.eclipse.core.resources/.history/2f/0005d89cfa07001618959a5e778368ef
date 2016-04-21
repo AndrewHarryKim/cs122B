@@ -1,0 +1,9 @@
+package com.simple;
+
+public class CartList {
+	
+	public CartList(CartList obj) {
+	       shares = obj.getShares();
+	       price = obj.getPrice();
+	    }
+}
