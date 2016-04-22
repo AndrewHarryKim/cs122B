@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-
+import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -62,37 +62,49 @@ public class CheckCC extends HttpServlet {
 
 			stmt = conn.createStatement();
 			stmt2 = conn.createStatement();
-			
+
 			// if(request.getParameter("cart") !=null)
 			// {
 			//
 			// out.println("THE CHECKOUT");
-//			<td><input type="text" name="cc_id" value="" /></td>
-//            </tr>
-//             <tr>
-//                <td>First Name</td>
-//                <td><input type="text" name="first_name" value="" /></td>
-//            </tr>
-//             <tr>
-//                <td>Last Name</td>
-//                <td><input type="text" name="last_name" value="" /></td>
-//            </tr>
-//            <tr>
-//                <td>Exp Date</td>
-//                <td><input type="date" name="expiration" value="" /></td>
-//            </tr>
-			String a;
-//			rs = stmt.executeQuery("SELECT s.id, s.first_name, s.last_name, s.dob, s.photo_url" + " FROM stars s"
-//					+ " WHERE s.first_name='" + names[0] + "' AND  s.last_name='" + names[1] + "';");
+			// <td><input type="text" name="cc_id" value="" /></td>
+			// </tr>
+			// <tr>
+			// <td>First Name</td>
+			// <td><input type="text" name="first_name" value="" /></td>
+			// </tr>
+			// <tr>
+			// <td>Last Name</td>
+			// <td><input type="text" name="last_name" value="" /></td>
+			// </tr>
+			// <tr>
+			// <td>Exp Date</td>
+			// <td><input type="date" name="expiration" value="" /></td>
+			// </tr>
+			String cc_id = request.getParameter("cc_id");
+			String first_name = request.getParameter("first_name");
+			String last_name = request.getParameter("last_name");
+			String expiration = request.getParameter("expiration");
+			 rs = stmt.executeQuery("SELECT *" + " FROM creditcards"
+			 + " WHERE first_name='" + first_name + "' AND last_name='" +
+			 last_name  + "' AND id='" + cc_id + "' AND expiration='" + expiration +"';");
 
 			// ArrayList<String> movieTitles = new ArrayList<String>();
 			// ArrayList<Integer> movieIDs = new ArrayList<Integer>();
-			// while(movieList.next())
-			// {
-			// movieTitles.add(movieList.getString(1));
-			// movieIDs.add((Integer)movieList.getInt(2));
-			//
-			// }
+			 if(rs.next())
+			 {
+				 // This means you did well
+				 String Message=("Successful Transaction. Redirecting in 5 Seconds.");
+				 out.println(Message);
+				 
+				 response.sendRedirect("Success"+"?message="+Message);
+			 }
+			 else
+			 {
+				 System.out.println(cc_id+"\n"+cc_id+"\n"+first_name+"\n"+last_name+"\n"+expiration);
+				 response.sendRedirect(Global.checkoutPath+"?confirmed=False");
+				 
+			 }
 			//
 			//
 			// RequestDispatcher dispatcher =

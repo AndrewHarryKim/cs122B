@@ -5189,3 +5189,9 @@ Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.
 
 !ENTRY org.eclipse.ui 4 4 2016-04-21 19:03:05.022
 !MESSAGE Conflicting handlers for org.eclipse.wst.jsdt.ui.edit.text.java.open.editor: {ActionHandler(org.eclipse.wst.jsdt.ui.actions.OpenAction@55d1605b)} vs {ActionHandler(org.eclipse.wst.jsdt.ui.actions.OpenAction@55d1605b)}
+
+!ENTRY org.eclipse.ui 4 4 2016-04-21 19:24:29.864
+!MESSAGE Conflicting handlers for org.eclipse.wst.jsdt.ui.edit.text.java.open.editor: {ActionHandler(org.eclipse.wst.jsdt.ui.actions.OpenAction@55d1605b)} vs {ActionHandler(org.eclipse.wst.jsdt.ui.actions.OpenAction@55d1605b)}
+
+!ENTRY org.eclipse.ui 4 4 2016-04-21 19:32:45.947
+!MESSAGE Conflicting handlers for org.eclipse.wst.jsdt.ui.edit.text.java.open.editor: {ActionHandler(org.eclipse.wst.jsdt.ui.actions.OpenAction@55d1605b)} vs {ActionHandler(org.eclipse.wst.jsdt.ui.actions.OpenAction@55d1605b)}

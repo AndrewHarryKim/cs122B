@@ -65,11 +65,11 @@
 
             </table>
             <% 
-                if (request.getParameter("message") == null) {
+                if (request.getParameter("confirmed") == null) {
                     //out.println("");
                 } 
                 else {
-                    out.println("<div>"+request.getParameter("message")+"</div>");
+                    out.println("<div>"+"Invalid Credentials Entered."+"</div>");
                 }
             %>
            

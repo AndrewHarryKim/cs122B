@@ -40,7 +40,7 @@
         <title>Your Cart</title>
     </head>
     <body>
-    <form id="checkoutForm" action=<%=checkoutPath+"?confirmed=false"%> method="post"></form>
+    <form id="checkoutForm" action=<%=checkoutPath+""%> method="post"></form>
 	<form id="deleteForm" method="post"></form>
         <div id="toolbar">
             
