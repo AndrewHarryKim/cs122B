@@ -75,7 +75,7 @@ public class Cart extends HttpServlet {
 			stmt2 = conn.createStatement();
 //			CartList temp= (CartList) request.getAttribute("cart");
 			CartList temp= (CartList) session.getAttribute("cart");
-			if(temp==null || temp.cart.size()==0)
+			if(temp==null )
 			{
 				out.println("Cart Empty... Generating Sample Cart.");
 				session.setAttribute("cart",new CartList());
@@ -85,7 +85,7 @@ public class Cart extends HttpServlet {
 			
 			
 			temp=(CartList) session.getAttribute("cart");
-			if(temp==null || temp.cart.size()==0)
+			if(temp==null )
 			{
 				out.println("Still Empty.");
 			}
