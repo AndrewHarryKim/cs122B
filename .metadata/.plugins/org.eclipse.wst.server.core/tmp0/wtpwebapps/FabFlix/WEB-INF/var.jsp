@@ -21,4 +21,8 @@
 	String movieListPath="MovieList";
 	// This is the Cart location.
 	String cartPath="Cart";
+	// This is the CheckOut location.
+	String checkoutPath="Checkout";
+	// This confirms the CC is legit
+	String ccAuthPath="CheckCC";
 %>
