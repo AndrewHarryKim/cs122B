@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="fabflix.Global" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+	<body>
+	
+	<%@include file="site-header.jsp" %>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	
+	<%@include file="login-authentication.jsp" %>
+	
+	
+	Welcome <%=session.getAttribute("first_name")%>
+	<a align= "right" href=<%=Global.logoutPath+""%>>Log out</a>
+	<%
+		out.println("</br>");
+	    out.println("<a href='"+Global.browseGenre+"'>Browse by Genre</a>");
+	    out.println("<a href='"+Global.browseTitle+"'>Browse by Title</a>");
+	    out.println("<a href='search'>Advanced Search</a>");
+	%>
+</body>
+</html>

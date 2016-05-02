@@ -1,0 +1,31 @@
+package fabflix;
+
+public class Global {
+	public static String DB_USER= "root"; 
+	public static String DB_PASS="pops711";
+	public static String homeServletPath="/Home";
+	public static String loginServletPath="/Login";
+	public static String loginJSPPath="/WEB-INF/login.jsp";
+	public static String logoutServletPath="Logout";
+	public static String browseGenreServlet="Browse?by=genre";
+	public static String browseTitleServlet="Browse?by=title";
+	public static String browseGenreJSP="/WEB-INF/browse.jsp?by=genre";
+	public static String browseTitleJSP="/WEB-INF/browse.jsp?by=title";
+	public static String movieListServletPath="MovieList";
+	public static String searchServletPath="Search";
+	
+//	// This is the location of the Login Portal
+//	// This is the location of the Login-Authentication
+//	public static String authLoginPath="Login";	
+//	// This is the location of the Logout script
+//	//This is the location of the HomePage
+//	// This is the location of the Search Page
+//	public static String searchPath="";	
+//	// This is the location of the General Browsing Page and the sub-pages
+//	public static String browsePath="browse.jsp";
+//	// This is the location of the movie-list after you find one.
+//	// This is the Cart location.
+//	public static String cartPath="Cart";
+//	// This is the CheckOut location.
+//	public static String checkoutPath="Checkout";
+}

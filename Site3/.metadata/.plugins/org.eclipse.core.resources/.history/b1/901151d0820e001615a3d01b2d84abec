@@ -1,0 +1,9 @@
+
+<%@ page import="fabflix.Global" %>
+<%
+		// This portion of the code is vital to make it so the user cannot access a page w/o being logged in.
+	    if ((session.getAttribute("email") == null) || (session.getAttribute("email") == "")) {
+			String redirectURL = Global.loginPath+"?message=";
+	        response.sendRedirect(redirectURL);
+	    }
+%>

@@ -1,0 +1,57 @@
+package fabflix;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import javax.servlet.http.HttpServletRequest;
+
+
+public class QueryTester {
+	private static final int STRING_ARG_TYPE = 0;
+	private static final int INT_ARG_TYPE = 1;
+
+	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
+	
+	
+	public String getGenreQueryString(HttpServletRequest request, ArrayList<String> argumentList, ArrayList<Integer> argumentTypes){
+    	argumentList.add(request.getParameter("id")+"%");
+    	argumentTypes.add(STRING_ARG_TYPE);
+		return "SELECT sm.movie_id, m.title, m.year, m.director"
+				+ " FROM movies m, stars s,stars_in_movies sm, genres_in_movies gm"
+				+ " WHERE s.id=sm.star_id AND m.id=sm.movie_id AND m.id=gm.movie_id AND gm.genre_id = ? ";	
+    }
+    public String getTitleQueryString(HttpServletRequest request, ArrayList<String> argumentList, ArrayList<Integer> argumentTypes){
+    	argumentList.add(request.getParameter("browseletter")+"%");
+    	argumentTypes.add(STRING_ARG_TYPE);
+    	return "SELECT sm.movie_id, m.title, m.year, m.director"
+			+ " FROM movies m, stars s, " + "stars_in_movies sm"
+			+ " WHERE s.id=sm.star_id AND m.id=sm.movie_id AND m.title LIKE ? ";
+			
+    }
+	public static void main(String[] args) {
+		Connection conn = null;
+		PreparedStatement prepStmt = null;
+		ResultSet rs = null;
+		ArrayList<String> argumentList = new ArrayList<String>();
+		ArrayList<Integer> argumentTypes = new ArrayList<Integer>();
+		try {
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+	
+			conn = DriverManager.getConnection(dburl, Global.DB_USER, Global.DB_PASS);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+}
