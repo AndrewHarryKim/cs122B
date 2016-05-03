@@ -1,5 +1,0 @@
-var input = getElementById("dbSearchBox");
-
-function submitSearch(){
-	document.loction.search = input.value;
-};
