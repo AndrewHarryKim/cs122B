@@ -27,16 +27,10 @@ public class SaxParserMain extends DefaultHandler{
 	List catInMovies;
 	Set genres;
 	
-	List myActors;
-	List myBadActors;
-
-
 	private String tempVal;
 	
 	//to maintain context
 	private Movie tempMovie;
-	//to maintain context
-	private Star tempStar;
 	
 	
 	public SaxParserMain(){
@@ -44,42 +38,14 @@ public class SaxParserMain extends DefaultHandler{
 		myBadMovies = new ArrayList();
 		catInMovies = new ArrayList();
 		genres=new HashSet();
-		
-		myActors = new ArrayList();
-		myBadActors = new ArrayList();
-		
 	}
 	
 	public void runMovies() {
 		parseMovieDocument();
 		printMovieData();
-		
-		parseStarDocument();
-		printStarData();
 	}
 	
-	private void parseStarDocument() {
-		
-		//get a factory
-		SAXParserFactory spf = SAXParserFactory.newInstance();
-		try {
-		
-			//get a new instance of parser
-			SAXParser sp = spf.newSAXParser();
-			
-			//parse the file and also register this class for call backs
-//			sp.parse("employees.xml", this);
-			sp.parse("actors63.xml", this);
-			
-			
-		}catch(SAXException se) {
-			se.printStackTrace();
-		}catch(ParserConfigurationException pce) {
-			pce.printStackTrace();
-		}catch (IOException ie) {
-			ie.printStackTrace();
-		}
-	}
+
 	private void parseMovieDocument() {
 		
 		//get a factory
@@ -102,28 +68,6 @@ public class SaxParserMain extends DefaultHandler{
 			ie.printStackTrace();
 		}
 	}
-	private void printStarData(){
-		
-		
-		@SuppressWarnings("rawtypes")
-//		Iterator it = myMovies.iterator();
-		Iterator it = myActors.iterator();
-//		while(it.hasNext()) {
-//			try
-//			{
-//				
-//				System.out.println(it.next().toString());
-//			}
-//			catch(NullPointerException e)
-//			{
-//				e.printStackTrace();
-////				System.out.println("Nothing Found");
-//			}
-//		}
-		System.out.println("\nNo of Actors '" + myActors.size() + "'.");
-		System.out.println("\nBadly Formatted A Found: '"+myBadActors.size()+"'\n");
-		
-	}
 
 	/**
 	 * Iterate through the list and print
@@ -136,18 +80,18 @@ public class SaxParserMain extends DefaultHandler{
 		@SuppressWarnings("rawtypes")
 //		Iterator it = myMovies.iterator();
 		Iterator it = myBadMovies.iterator();
-//		while(it.hasNext()) {
-//			try
-//			{
-//				
-//				System.out.println(it.next().toString());
-//			}
-//			catch(NullPointerException e)
-//			{
-//				e.printStackTrace();
-////				System.out.println("Nothing Found");
-//			}
-//		}
+		while(it.hasNext()) {
+			try
+			{
+				
+				System.out.println(it.next().toString());
+			}
+			catch(NullPointerException e)
+			{
+				e.printStackTrace();
+//				System.out.println("Nothing Found");
+			}
+		}
 		
 		System.out.println("All the Genres Found:");
 		System.out.println(genres);
@@ -161,11 +105,6 @@ public class SaxParserMain extends DefaultHandler{
 		if(qName.equalsIgnoreCase("film")) {
 			//create a new instance of employee
 			tempMovie = new Movie();
-//			tempMovie.setType(attributes.getValue("type"));
-		}
-		else if(qName.equalsIgnoreCase("actor")) {
-			//create a new instance of employee
-			tempStar = new Star();
 //			tempMovie.setType(attributes.getValue("type"));
 		}
 		
@@ -185,7 +124,7 @@ public class SaxParserMain extends DefaultHandler{
 		banner_url:varchar(200) 
 		trailer_url:varchar(200) 
 		 */
-		if(qName.equalsIgnoreCase("film")) {
+		if(qName.equalsIgnoreCase("films")) {
 			//add it to the list
 			myMovies.add(tempMovie);
 			if(tempMovie.getYear()==-404)
@@ -199,9 +138,15 @@ public class SaxParserMain extends DefaultHandler{
 			}
 			catch(NumberFormatException e)
 			{
-//				tempMovie.setId((tempVal.hashCode()));
-				tempMovie.setId(-1);
-
+				tempMovie.setId((tempVal.hashCode()));
+//
+//				StringBuilder sb = new StringBuilder();
+//				for (char c : tempVal.toCharArray())
+//				    sb.append((int)c);
+//				if(sb.toString().length()>9)
+//					tempMovie.setId(Integer.parseInt(sb.toString().substring(0, 9)));
+//				else
+//					tempMovie.setId(Integer.parseInt(sb.toString()));
 			}
 		}
 		else if (qName.equalsIgnoreCase("t")) 
@@ -233,54 +178,7 @@ public class SaxParserMain extends DefaultHandler{
 			genres.add(tempVal);
 			catInMovies.add(tempVal);
 		}
-		///THE ACTOR
-		/*
-		id:integer (primary key)
-		title:varchar(100) 
-		year:integer 
-		director:varchar(100) 
-		banner_url:varchar(200) 
-		trailer_url:varchar(200) 
-		 */
-		///
-		if(qName.equalsIgnoreCase("actor")) {
-			//add it to the list
-			if((tempStar.getFirst_name()!=null&&!tempStar.getFirst_name().equals("")) || 
-					(tempStar.getLast_name()!=null&&!tempStar.getLast_name().equals("")))
-				myActors.add(tempStar);
-//			if(tempStar.getYear()==-404)
-//				myBadActors.add(tempStar);
-			
-		}
-		else if (qName.equalsIgnoreCase("familyname")) {
-			try
-			{
-				tempStar.setLast_name(tempVal);
-			}
-			catch(NumberFormatException e)
-			{
-				tempStar.setId((tempVal.hashCode()));
-//
-//				StringBuilder sb = new StringBuilder();
-//				for (char c : tempVal.toCharArray())
-//				    sb.append((int)c);
-//				if(sb.toString().length()>9)
-//					tempMovie.setId(Integer.parseInt(sb.toString().substring(0, 9)));
-//				else
-//					tempMovie.setId(Integer.parseInt(sb.toString()));
-			}
-		}
-		else if (qName.equalsIgnoreCase("firstname")) {
-			try
-			{
-				tempStar.setFirst_name(tempVal);
-			}
-			catch(NumberFormatException e)
-			{
-				tempStar.setId((tempVal.hashCode()));
-
-			}
-		}
+		
 	}
 	
 	public static void main(String[] args){

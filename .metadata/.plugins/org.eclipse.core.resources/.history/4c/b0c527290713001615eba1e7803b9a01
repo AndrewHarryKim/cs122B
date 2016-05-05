@@ -108,18 +108,18 @@ public class SaxParserMain extends DefaultHandler{
 		@SuppressWarnings("rawtypes")
 //		Iterator it = myMovies.iterator();
 		Iterator it = myActors.iterator();
-//		while(it.hasNext()) {
-//			try
-//			{
-//				
-//				System.out.println(it.next().toString());
-//			}
-//			catch(NullPointerException e)
-//			{
-//				e.printStackTrace();
-////				System.out.println("Nothing Found");
-//			}
-//		}
+		while(it.hasNext()) {
+			try
+			{
+				
+				System.out.println(it.next().toString());
+			}
+			catch(NullPointerException e)
+			{
+				e.printStackTrace();
+//				System.out.println("Nothing Found");
+			}
+		}
 		System.out.println("\nNo of Actors '" + myActors.size() + "'.");
 		System.out.println("\nBadly Formatted A Found: '"+myBadActors.size()+"'\n");
 		
@@ -136,18 +136,18 @@ public class SaxParserMain extends DefaultHandler{
 		@SuppressWarnings("rawtypes")
 //		Iterator it = myMovies.iterator();
 		Iterator it = myBadMovies.iterator();
-//		while(it.hasNext()) {
-//			try
-//			{
-//				
-//				System.out.println(it.next().toString());
-//			}
-//			catch(NullPointerException e)
-//			{
-//				e.printStackTrace();
-////				System.out.println("Nothing Found");
-//			}
-//		}
+		while(it.hasNext()) {
+			try
+			{
+				
+				System.out.println(it.next().toString());
+			}
+			catch(NullPointerException e)
+			{
+				e.printStackTrace();
+//				System.out.println("Nothing Found");
+			}
+		}
 		
 		System.out.println("All the Genres Found:");
 		System.out.println(genres);
@@ -185,7 +185,7 @@ public class SaxParserMain extends DefaultHandler{
 		banner_url:varchar(200) 
 		trailer_url:varchar(200) 
 		 */
-		if(qName.equalsIgnoreCase("film")) {
+		if(qName.equalsIgnoreCase("films")) {
 			//add it to the list
 			myMovies.add(tempMovie);
 			if(tempMovie.getYear()==-404)
@@ -234,14 +234,7 @@ public class SaxParserMain extends DefaultHandler{
 			catInMovies.add(tempVal);
 		}
 		///THE ACTOR
-		/*
-		id:integer (primary key)
-		title:varchar(100) 
-		year:integer 
-		director:varchar(100) 
-		banner_url:varchar(200) 
-		trailer_url:varchar(200) 
-		 */
+		
 		///
 		if(qName.equalsIgnoreCase("actor")) {
 			//add it to the list
