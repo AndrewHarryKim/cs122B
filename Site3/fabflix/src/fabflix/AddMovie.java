@@ -23,10 +23,12 @@ public class AddMovie extends HttpServlet {
         super();
     }
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession(true);
 	    if ((session.getAttribute("employee_email") == null) || ("".equals(session.getAttribute("employee_email")))) {
 			String redirectURL = request.getContextPath() + Global.dashboardLoginServletPath;
 	        response.sendRedirect(redirectURL);
 	        return;
+	    }
 	    
 
 		RequestDispatcher dispatcher = null;
