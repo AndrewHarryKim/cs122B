@@ -33,6 +33,7 @@
                 </tbody>
 
             </table>
+            
             <% 
                 if (request.getAttribute("message") == null) {
                     //out.println("");
@@ -41,6 +42,10 @@
                     out.println("<div class='center'>"+request.getAttribute("message")+"</div>");
                 }
             %>
+            <div class="g-recaptcha" data-sitekey=<%=Global.SITE_KEY %>></div>
+            
         </form>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        
     </body>
 </html>
