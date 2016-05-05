@@ -7,7 +7,7 @@
 			<li><a href="<%=request.getContextPath()%>/Browse">Browse</a></li>
 			<li><a href="<%=request.getContextPath()%>/Cart">View Cart</a></li>
 			<% if(!(session.getAttribute("email") == null) || (session.getAttribute("email") == "")){%>
-				<a href=<%=Global.logoutServletPath+""%>><input class="absolute-right" type="button" value="logout"/></a>
+				<li class="absolute-right"><a href=<%=Global.logoutServletPath+""%>><input  type="button" value="logout"/></a></li>
 			<%} %>
 		</ul>	
 	</nav>
