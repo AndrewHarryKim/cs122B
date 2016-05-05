@@ -216,3 +216,12 @@ java.net.UnknownHostException: services.gradle.org
 2016-04-21 18:47:43,324 [main] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache file is not out-of-date. No remote download required.
 2016-05-03 11:37:02,142 [main] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache file is out-of-date. Remote download required.
 2016-05-03 11:40:51,550 [main] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache file is not out-of-date. No remote download required.
+2016-05-04 14:24:11,704 [main] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache file is out-of-date. Remote download required.
+2016-05-04 14:27:08,883 [main] INFO  org.eclipse.jetty.util.log - Logging initialized @213604ms
+2016-05-04 14:27:09,000 [main] INFO  org.eclipse.jetty.server.Server - jetty-9.2.13.v20150730
+2016-05-04 14:27:09,043 [main] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@4f6cf902{/wse,null,AVAILABLE}
+2016-05-04 14:27:09,051 [main] INFO  o.e.jetty.server.ServerConnector - Started ServerConnector@78690481{HTTP/1.1}{0.0.0.0:59252}
+2016-05-04 14:27:09,052 [main] INFO  org.eclipse.jetty.server.Server - Started @213773ms
+2016-05-04 18:51:16,855 [Framework stop] INFO  o.e.jetty.server.ServerConnector - Stopped ServerConnector@78690481{HTTP/1.1}{0.0.0.0:0}
+2016-05-04 18:51:16,902 [Framework stop] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@4f6cf902{/wse,null,UNAVAILABLE}
+2016-05-04 22:34:44,490 [main] INFO  c.g.t.t.d.PublishedGradleVersions - Gradle version information cache file is not out-of-date. No remote download required.

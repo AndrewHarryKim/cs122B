@@ -59,7 +59,7 @@ public class Checkout extends HttpServlet {
 			}
 			
 			temp=(CartList) session.getAttribute("cart");
-			if(temp.cart.size()==0)
+			if(temp.cart.size()==-1)
 			{
 				out.println("Still Empty.");
 			}

@@ -27,9 +27,10 @@ trailer_url:varchar(200)
 	}
 
 	public CartItem() {
-		this(000, "Test, The movie", 0001, "Director, the Director", 
-				"http://ia.media-imdb.com/images/M/MV5BNTY2ODQ4OTQ2OF5BMl5BanBnXkFtZTgwNTYxNzg2ODE@._V1__SX1171_SY563_.jpg",
-				"http://ia.media-imdb.com/images/M/MV5BNTY2ODQ4OTQ2OF5BMl5BanBnXkFtZTgwNTYxNzg2ODE@._V1__SX1171_SY563_.jpg");
+		
+//		this(000, "Test, The movie", 0001, "Director, the Director", 
+//				"http://ia.media-imdb.com/images/M/MV5BNTY2ODQ4OTQ2OF5BMl5BanBnXkFtZTgwNTYxNzg2ODE@._V1__SX1171_SY563_.jpg",
+//				"http://ia.media-imdb.com/images/M/MV5BNTY2ODQ4OTQ2OF5BMl5BanBnXkFtZTgwNTYxNzg2ODE@._V1__SX1171_SY563_.jpg");
 	}
 
 	
