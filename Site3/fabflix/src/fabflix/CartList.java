@@ -12,7 +12,7 @@ public class CartList {
 
 	public CartList() {
 		cart = new ArrayList<CartItem>();
-		cart.add(new CartItem());
+//		cart.add(new CartItem());
 	}
 
 	public CartList(CartItem item) {
