@@ -42,6 +42,13 @@ public class CheckCC extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		HttpSession session = request.getSession(true);
+	    if ((session.getAttribute("email") == null) || ("".equals(session.getAttribute("email")))) {
+			String redirectURL = request.getContextPath() + Global.loginServletPath;
+	        response.sendRedirect(redirectURL);
+	        return;
+	    }
+		
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
