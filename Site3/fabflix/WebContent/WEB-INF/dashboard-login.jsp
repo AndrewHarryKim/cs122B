@@ -1,4 +1,4 @@
-<%@include file="site-header.jsp" %>
+
 <%@page import="fabflix.Global" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -9,7 +9,7 @@
         <title>fabflix employee - Login</title>
     </head>
     <body class="employee-body">
-        <form method="post" action=<%=request.getContextPath() + Global.dashboardServletPath %>>
+        <form method="post" action=<%=request.getContextPath() + Global.dashboardLoginServletPath %>>
             <table class="center loginTable" border="1">
                 <thead>
                     <tr>
