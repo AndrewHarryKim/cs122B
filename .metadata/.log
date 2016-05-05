@@ -9561,3 +9561,12 @@ java.lang.NullPointerException
 
 !ENTRY org.eclipse.jdt.launching 4 107 2016-05-04 22:41:15.111
 !MESSAGE Launch configuration DocsConnectionPropsHelper references non-existing project JDBCDriver.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2016-05-05 02:21:20.523
+!MESSAGE Launch configuration DocsConnectionPropsHelper references non-existing project JDBCDriver.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2016-05-05 02:24:38.463
+!MESSAGE Launch configuration DocsConnectionPropsHelper references non-existing project JDBCDriver.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2016-05-05 02:24:59.651
+!MESSAGE Launch configuration DocsConnectionPropsHelper references non-existing project JDBCDriver.

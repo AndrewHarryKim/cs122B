@@ -6,6 +6,9 @@ body{
 	background-color: #ffdb4d;
 	margin: 0px;
 }
+.employee-body{
+	background-color: beige;
+}
 
 .indent{
 	margin-left: 3%;
