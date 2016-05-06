@@ -107,7 +107,7 @@ public class SaxParserMain extends DefaultHandler {
 		}
 		connection.setAutoCommit(false);
 		java.sql.Statement s = connection.createStatement();
-		String[] tblName = { "genres", "stars","movies" };
+		String[] tblName = { "genres", "stars" };
 
 		// Insert Genres
 		Iterator names = genres.iterator();
@@ -168,20 +168,27 @@ public class SaxParserMain extends DefaultHandler {
 		// Insert movies
 		
 		java.sql.Statement s3 = connection.createStatement();
-		Iterator movies = myMovies.iterator();
-		while (movies.hasNext()) {
-			Movie movie = (Movie) movies.next();
-			String[] specialS = { "title", "year","director" };
-			// title:El grand cavalcodos, Year:-404, Director:Bunuel
-			String[] vals = { movie.getTitle(), Integer.toString(movie.getYear()),movie.getDirector() };
-			
+		Iterator stars = myActors.iterator();
+		while (stars.hasNext()) {
+			Star actor = (Star) stars.next();
+			String[] specialS = { "first_name", "last_name" };
+			// actor.setFirst_name(actor.getFirst_name().replace("\\",
+			// "").replace("\'", "\'\'"));
+			// actor.setLast_name(actor.getLast_name().replace("\\",
+			// "").replace("\'", "\'\'"));
+			String[] vals = { actor.getFirst_name(), actor.getLast_name() };
+
 			String tmp = "";
 
-			tmp = "INSERT INTO " + tblName[2] + " (" + specialS[0] + "," + specialS[1]+ "," + specialS[2] + ")" + " SELECT '" + vals[0]
-					+ "','" + vals[1]+ "','" + vals[2] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[2] + " WHERE " + specialS[0]
-					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1]+ "' AND " + specialS[2] + "='" + vals[2] + "');";
-//			System.out.println(tmp);
-			
+			if (actor.getFirst_name() == null || actor.getFirst_name() == null || actor.getFirst_name().equals("")
+					|| actor.getFirst_name().equals("")) {
+
+				actor.setFirst_name("");
+			}
+			tmp = "INSERT INTO " + tblName[1] + " (" + specialS[0] + "," + specialS[1] + ")" + " SELECT '" + vals[0]
+					+ "','" + vals[1] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[1] + " WHERE " + specialS[0]
+					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1] + "');";
+
 			s3.addBatch(tmp);
 
 		}

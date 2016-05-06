@@ -106,64 +106,64 @@ public class SaxParserMain extends DefaultHandler {
 			System.out.println("Connection Invalid");
 		}
 		connection.setAutoCommit(false);
-		java.sql.Statement s = connection.createStatement();
-		String[] tblName = { "genres", "stars","movies" };
-
-		// Insert Genres
-		Iterator names = genres.iterator();
-		while (names.hasNext()) {
-			String[] specialS = { "name" };
-
-			String name = names.next().toString();
-			String tmp = "INSERT INTO " + tblName[0] + " (" + specialS[0] + ")" + " SELECT '" + name
-					+ "' WHERE NOT EXISTS(SELECT * FROM " + tblName[0] + " WHERE " + specialS[0] + "='" + name + "');";
-
-			s.addBatch(tmp);
-
-		}
-		try {
-			s.executeBatch();
-			connection.commit();
-			s.close();
-			System.out.println("DONE WITH BATCH 1");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		// Insert Stars
-		java.sql.Statement s2 = connection.createStatement();
-		Iterator stars = myActors.iterator();
-		while (stars.hasNext()) {
-			Star actor = (Star) stars.next();
-			String[] specialS = { "first_name", "last_name" };
-			// actor.setFirst_name(actor.getFirst_name().replace("\\",
-			// "").replace("\'", "\'\'"));
-			// actor.setLast_name(actor.getLast_name().replace("\\",
-			// "").replace("\'", "\'\'"));
-			String[] vals = { actor.getFirst_name(), actor.getLast_name() };
-
-			String tmp = "";
-
-			if (actor.getFirst_name() == null || actor.getFirst_name() == null || actor.getFirst_name().equals("")
-					|| actor.getFirst_name().equals("")) {
-
-				actor.setFirst_name("");
-			}
-			tmp = "INSERT INTO " + tblName[1] + " (" + specialS[0] + "," + specialS[1] + ")" + " SELECT '" + vals[0]
-					+ "','" + vals[1] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[1] + " WHERE " + specialS[0]
-					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1] + "');";
-
-			s2.addBatch(tmp);
-
-		}
-		try {
-			s2.executeBatch();
-			connection.commit();
-			s2.close();
-			System.out.println("DONE WITH BATCH 2");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+//		java.sql.Statement s = connection.createStatement();
+//		String[] tblName = { "genres", "stars","movies" };
+//
+//		// Insert Genres
+//		Iterator names = genres.iterator();
+//		while (names.hasNext()) {
+//			String[] specialS = { "name" };
+//
+//			String name = names.next().toString();
+//			String tmp = "INSERT INTO " + tblName[0] + " (" + specialS[0] + ")" + " SELECT '" + name
+//					+ "' WHERE NOT EXISTS(SELECT * FROM " + tblName[0] + " WHERE " + specialS[0] + "='" + name + "');";
+//
+//			s.addBatch(tmp);
+//
+//		}
+//		try {
+//			s.executeBatch();
+//			connection.commit();
+//			s.close();
+//			System.out.println("DONE WITH BATCH 1");
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//
+//		// Insert Stars
+//		java.sql.Statement s2 = connection.createStatement();
+//		Iterator stars = myActors.iterator();
+//		while (stars.hasNext()) {
+//			Star actor = (Star) stars.next();
+//			String[] specialS = { "first_name", "last_name" };
+//			// actor.setFirst_name(actor.getFirst_name().replace("\\",
+//			// "").replace("\'", "\'\'"));
+//			// actor.setLast_name(actor.getLast_name().replace("\\",
+//			// "").replace("\'", "\'\'"));
+//			String[] vals = { actor.getFirst_name(), actor.getLast_name() };
+//
+//			String tmp = "";
+//
+//			if (actor.getFirst_name() == null || actor.getFirst_name() == null || actor.getFirst_name().equals("")
+//					|| actor.getFirst_name().equals("")) {
+//
+//				actor.setFirst_name("");
+//			}
+//			tmp = "INSERT INTO " + tblName[1] + " (" + specialS[0] + "," + specialS[1] + ")" + " SELECT '" + vals[0]
+//					+ "','" + vals[1] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[1] + " WHERE " + specialS[0]
+//					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1] + "');";
+//
+//			s2.addBatch(tmp);
+//
+//		}
+//		try {
+//			s2.executeBatch();
+//			connection.commit();
+//			s2.close();
+//			System.out.println("DONE WITH BATCH 2");
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
 		
 		// Insert movies
 		
@@ -180,14 +180,14 @@ public class SaxParserMain extends DefaultHandler {
 			tmp = "INSERT INTO " + tblName[2] + " (" + specialS[0] + "," + specialS[1]+ "," + specialS[2] + ")" + " SELECT '" + vals[0]
 					+ "','" + vals[1]+ "','" + vals[2] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[2] + " WHERE " + specialS[0]
 					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1]+ "' AND " + specialS[2] + "='" + vals[2] + "');";
-//			System.out.println(tmp);
+			System.out.println(tmp);
 			
-			s3.addBatch(tmp);
+//			s3.addBatch(tmp);
 
 		}
 		try {
 			s3.executeBatch();
-			connection.commit();
+//			connection.commit();
 			s3.close();
 			System.out.println("DONE WITH BATCH 3");
 		} catch (SQLException e) {
