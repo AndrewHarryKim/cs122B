@@ -1,0 +1,14 @@
+xml_parsing_optimization
+
+Some methods of performance tuning that are possible to speed up the insert is to do:
+- Batch Inserts
+- Removed Triggers
+- Compile and run with the terminal
+
+Batch Triggers-
+	With Batch Triggers the database can know that it is taking iin a lot of the same type of insert. This will shave time as mentioned in class we will not have to go through too many other layers. Also doing one large insert vs many small ones gave a lot of speed as well since we have even less overhead.
+	Also it is instead in this case o(1) compared to o(n) for putting n entries.
+Removed Triggers-
+	Earlier in this project there was triggers to deal with adding things to tables. While these worked, they were slow so replaced with faster methods to populate the members in the tables. One thing that did slow down the parsing when the triggers where made was adding to the genres_in_movies and stars_in_movies tables. Since the ids are unique there had to be some way to store the ids and consequently there was a problem with using queries to do it. Instead, the two tables where hashMaped and then had ids pull by the map made from the table.
+Compile and run with the terminal-
+	This speeds up the proccess oddly as well
