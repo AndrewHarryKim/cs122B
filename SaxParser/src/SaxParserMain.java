@@ -45,6 +45,8 @@ public class SaxParserMain extends DefaultHandler {
 	// to maintain context
 	private Star tempStar;
 
+	HashMap movieToId;
+
 	String dbName = "moviedb";
 	String dbUser = "root";
 	String dbPW = "pops711";
@@ -66,7 +68,7 @@ public class SaxParserMain extends DefaultHandler {
 
 		movie = "";
 		actorsIn = new ArrayList();
-
+		movieToId = new HashMap<>();
 	}
 
 	public void runMovies() {
@@ -107,7 +109,88 @@ public class SaxParserMain extends DefaultHandler {
 		}
 		connection.setAutoCommit(false);
 		java.sql.Statement s = connection.createStatement();
-		String[] tblName = { "genres", "stars","movies" };
+		String[] tblName = { "genres", "stars", "movies" };
+
+		// Insert movies
+
+		java.sql.Statement s3 = connection.createStatement();
+		Iterator movies = myMovies.iterator();
+		while (movies.hasNext()) {
+			Movie movie = (Movie) movies.next();
+			String[] specialS = { "title", "year", "director" };
+			// title:El grand cavalcodos, Year:-404, Director:Bunuel
+			String[] vals = { movie.getTitle(), Integer.toString(movie.getYear()), movie.getDirector() };
+
+			String tmp = "";
+			
+			
+			tmp = "INSERT INTO " + tblName[2] + " (" + specialS[0] + "," + specialS[1] + "," + specialS[2] + ")"
+					+ " SELECT '" + vals[0] + "','" + vals[1] + "','" + vals[2] + "' WHERE NOT EXISTS(SELECT * FROM "
+					+ tblName[2] + " WHERE " + specialS[0] + "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1]
+					+ "' AND " + specialS[2] + "='" + vals[2] + "');";
+			// System.out.println(tmp);
+			
+			s3.addBatch(tmp);
+			List<String> cats=movie.getCats();
+			if(cats!=null)
+			for (int i = 0; i < cats.size(); ++i) 
+			{
+				String tmp2 ="INSERT INTO genres_in_movies (genre_id, movie_id) "
+						+ "SELECT g.id, m.id "
+						+ "FROM movies AS m,genres AS g "
+						+ "WHERE g.name='"+ cats.get(i)+"'"+" AND "+" m.title='"+movie.getTitle()+"';";
+//				System.out.println(tmp2);
+				s3.addBatch(tmp2);
+			}
+			List actors= (List) movieActors.get(movie.getTitle());
+//			System.out.println(a);
+			if(actors!=null)
+				for (int i = 0; i < actors.size(); ++i) 
+				{
+					String[] actor_f=((String) actors.get(i)).split("\\s+");
+//					System.out.println( actors.get(i));
+					String tmp3="" ;
+					if(actor_f.length==1)
+					{
+						 tmp3 ="INSERT INTO stars_in_movies (star_id, movie_id) "
+								+ "SELECT s.id, m.id "
+								+ "FROM movies AS m,stars AS s "
+								+ "WHERE s.last_name='"+ actor_f[0]+"'"+" AND "+" m.title='"+movie.getTitle()+"';";
+//						System.out.println(tmp3);
+					}
+					else if (actor_f.length>1)
+					{
+						String fn=actor_f[0];
+						String ln=actor_f[1];
+						for(int j=2;j<actor_f.length;++j)
+						{
+							ln= " "+actor_f[j];
+						}
+						tmp3 ="INSERT INTO stars_in_movies (star_id, movie_id) "
+								+ "SELECT s.id, m.id "
+								+ "FROM movies AS m,stars AS s "
+								+ "WHERE s.last_name='"+ fn+"'"+" AND "+"s.first_name='"+
+								ln+"' AND " +" m.title='"+movie.getTitle()+"';";
+//						System.out.println(tmp3);
+					}
+					
+					s3.addBatch(tmp3);
+				}
+			/*
+			 star_id:integer, referencing stars.id
+			movie_id:integer, referencing movies.id
+			 */
+			
+
+		}
+		try {
+			s3.executeBatch();
+			connection.commit();
+			s3.close();
+			System.out.println("DONE WITH BATCH 3");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 		// Insert Genres
 		Iterator names = genres.iterator();
@@ -119,6 +202,8 @@ public class SaxParserMain extends DefaultHandler {
 					+ "' WHERE NOT EXISTS(SELECT * FROM " + tblName[0] + " WHERE " + specialS[0] + "='" + name + "');";
 
 			s.addBatch(tmp);
+			
+			
 
 		}
 		try {
@@ -161,35 +246,6 @@ public class SaxParserMain extends DefaultHandler {
 			connection.commit();
 			s2.close();
 			System.out.println("DONE WITH BATCH 2");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		// Insert movies
-		
-		java.sql.Statement s3 = connection.createStatement();
-		Iterator movies = myMovies.iterator();
-		while (movies.hasNext()) {
-			Movie movie = (Movie) movies.next();
-			String[] specialS = { "title", "year","director" };
-			// title:El grand cavalcodos, Year:-404, Director:Bunuel
-			String[] vals = { movie.getTitle(), Integer.toString(movie.getYear()),movie.getDirector() };
-			
-			String tmp = "";
-
-			tmp = "INSERT INTO " + tblName[2] + " (" + specialS[0] + "," + specialS[1]+ "," + specialS[2] + ")" + " SELECT '" + vals[0]
-					+ "','" + vals[1]+ "','" + vals[2] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[2] + " WHERE " + specialS[0]
-					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1]+ "' AND " + specialS[2] + "='" + vals[2] + "');";
-//			System.out.println(tmp);
-			
-			s3.addBatch(tmp);
-
-		}
-		try {
-			s3.executeBatch();
-			connection.commit();
-			s3.close();
-			System.out.println("DONE WITH BATCH 3");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
