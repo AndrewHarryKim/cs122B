@@ -11,6 +11,7 @@
 	<title>Insert title here</title>
 </head>
 <body class="employee-body">
+<%@include file="dashboard-header.jsp" %>
 	<a href=<%=request.getContextPath() +Global.insertStarServletPath%>><input type=button value="Insert Star"/></a>
 	<a href=<%=request.getContextPath() +Global.metaDataServletPath%>><input type=button value="Get MetaData"/></a>
 	<a href=<%=request.getContextPath() +Global.addMovieServletPath%>><input type=button value="Add Movie"/></a>
