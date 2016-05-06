@@ -42,7 +42,8 @@ public class AddMovie extends HttpServlet {
 	    String title = request.getParameter("add-movie-title");
 	    String director = request.getParameter("add-movie-director");
 	    String year = request.getParameter("add-movie-year");
-	    String star = request.getParameter("add-starname");
+	    String starFirst = request.getParameter("add-starfirstname");
+	    String starLast = request.getParameter("add-starlastname");
 	    String genre = request.getParameter("add-genrename");
 	    
 	    Integer yearNum = null;
@@ -55,7 +56,8 @@ public class AddMovie extends HttpServlet {
 	    if(title == null || ("".equals(title)) ||
 	    		director == null || ("".equals(director)) ||
 	    		year == null || ("".equals(year)) ||
-	    		star == null || ("".equals(star)) ||
+	    		starFirst == null || ("".equals(starFirst)) ||
+	    		starLast == null || ("".equals(starLast)) ||
 	    		genre == null || ("".equals(genre)))
 	    {
 		    if( ("".equals(title)) )
@@ -64,8 +66,10 @@ public class AddMovie extends HttpServlet {
 		    	request.setAttribute("noDirector", true);
 		    if( ("".equals(year)) )
 		    	request.setAttribute("noYear", true);
-		    if( ("".equals(star)) )
-		    	request.setAttribute("noStar", true);
+		    if( ("".equals(starFirst)) )
+		    	request.setAttribute("noStarFirst", true);
+		    if( ("".equals(starLast)) )
+		    	request.setAttribute("noStarLast", true);
 		    if( ("".equals(genre)) )
 		    	request.setAttribute("noGenre", true);
 		    dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/add-movie.jsp");
@@ -82,30 +86,35 @@ public class AddMovie extends HttpServlet {
 
 			try {
 				conn = DriverManager.getConnection(Global.dburl, Global.DB_USER, Global.DB_PASS);
-				cStmt = conn.prepareCall("{call add_movie(?, ?, ?, ?, ?, ?)}");
+				cStmt = conn.prepareCall("{call add_movie(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 				
-				String[] splt = star.split(" ");
-				String fn = "";
-				String ln = "";
-				if (splt.length == 1) {
-					ln = splt[0];
-				} else if (splt.length == 2) {
-					fn = splt[0];
-					ln = splt[1];
-				} else {
-
-					fn = splt[0];
-					ln = splt[1];
-					for (int i = 2; i < splt.length; ++i)
-						ln += " " + splt[i];
-				}
+		
 				cStmt.setString(1, title);
 				cStmt.setInt(2, yearNum);
 				cStmt.setString(3, director);
-				cStmt.setString(4, fn);
-				cStmt.setString(5, ln);
+				cStmt.setString(4, starFirst);
+				cStmt.setString(5, starLast);
 				cStmt.setString(6, genre);
+				cStmt.registerOutParameter(7, java.sql.Types.VARCHAR);
+				cStmt.registerOutParameter(8, java.sql.Types.VARCHAR);
+				cStmt.registerOutParameter(9, java.sql.Types.VARCHAR);
 				cStmt.execute();
+
+				request.setAttribute("add_movie_message", "Movie: " + title + " (" );
+				if("no".equals(cStmt.getString(7)))
+					request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "not ");
+				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "added)<br/> ");
+				
+				request.setAttribute("add_movie_message", 
+						request.getAttribute("add_movie_message") + "star: " + starFirst + " " + starLast + " (");
+				if("no".equals(cStmt.getString(8)))
+					request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "not ");
+				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "added)<br/> ");
+				
+				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "genre: " + genre + " (");
+				if("no".equals(cStmt.getString(9)))
+					request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "not ");
+				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "added)<br/> ");
 	    	} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
