@@ -21,6 +21,7 @@ photo_url:varchar(200)
 	private String photo_url;
 	
 	public Star(){
+		first_name="";
 		
 	}
 	

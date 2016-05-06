@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,13 +20,14 @@ import org.xml.sax.SAXException;
 
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.mysql.jdbc.ResultSet;
 import com.mysql.jdbc.Statement;
 
 /*
  * movies, stars, and genres
  * stars_in_movies and genres_in_movies
  */
-public class SaxParserMain extends DefaultHandler {
+public class SaxParserMain<a> extends DefaultHandler {
 
 	@SuppressWarnings("rawtypes")
 	List myMovies;
@@ -36,14 +38,15 @@ public class SaxParserMain extends DefaultHandler {
 	List myActors;
 	List myBadActors;
 
-	HashMap movieActors;
-
+	Map<String, List> movieToActors;
 	private String tempVal;
 
 	// to maintain context
 	private Movie tempMovie;
 	// to maintain context
 	private Star tempStar;
+
+	HashMap movieToId;
 
 	String dbName = "moviedb";
 	String dbUser = "root";
@@ -52,6 +55,7 @@ public class SaxParserMain extends DefaultHandler {
 	// Movie - > Stars
 	String movie;
 	List actorsIn;
+	String tmpDirector;
 
 	public SaxParserMain() {
 		myMovies = new ArrayList();
@@ -62,11 +66,13 @@ public class SaxParserMain extends DefaultHandler {
 		myActors = new ArrayList<>();
 		myBadActors = new ArrayList();
 
-		movieActors = new HashMap<>();
+		ArrayList<Star> a = new ArrayList<Star>();
+		movieToActors = new HashMap<String, List>();
 
 		movie = "";
 		actorsIn = new ArrayList();
-
+		movieToId = new HashMap<>();
+		tmpDirector = "";
 	}
 
 	public void runMovies() {
@@ -106,99 +112,356 @@ public class SaxParserMain extends DefaultHandler {
 			System.out.println("Connection Invalid");
 		}
 		connection.setAutoCommit(false);
+
+		// Start of Parse
+
+		String[] tblName = { "genres", "stars", "movies" };
+
+		StringBuilder tmp = new StringBuilder("INSERT INTO movies (title,year,director) VALUES ");
+
 		java.sql.Statement s = connection.createStatement();
-		String[] tblName = { "genres", "stars","movies" };
+		// java.sql.Statement s2 = connection.createStatement();
 
-		// Insert Genres
-		Iterator names = genres.iterator();
-		while (names.hasNext()) {
-			String[] specialS = { "name" };
+		Iterator movies = myMovies.iterator();
 
-			String name = names.next().toString();
-			String tmp = "INSERT INTO " + tblName[0] + " (" + specialS[0] + ")" + " SELECT '" + name
-					+ "' WHERE NOT EXISTS(SELECT * FROM " + tblName[0] + " WHERE " + specialS[0] + "='" + name + "');";
+		// StringBuilder tmpS = new StringBuilder((String) ("INSERT INTO
+		// stars_in_movies (star_id, movie_id) "
+		// + " SELECT s.id, m.id " + " FROM movies AS m,stars AS s WHERE "));
 
-			s.addBatch(tmp);
+		// System.out.println(tmpS);
+
+		int cnt = -1;
+		while (movies.hasNext()) {
+			Movie movie = (Movie) movies.next();
+			String[] specialS = { "title", "year", "director" };
+			String[] vals = { movie.getTitle(), Integer.toString(movie.getYear()), movie.getDirector() };
+			// tmp.append("('" + vals[0] + "','" + vals[1] + "','" + vals[2] +
+			// "')");
+			if (cnt == -1) {
+				tmp.append("('" + movie.getTitle() + "'," + vals[1] + ",'" + vals[2] + "')");
+				cnt = 0;
+			} else
+				tmp.append("," + "('" + movie.getTitle() + "'," + vals[1] + ",'" + vals[2] + "')");
+			List<String> actors = (List) movieToActors.get(movie.getTitle());
+
+			// if (actors != null) {
+			//
+			// for (int i = 0; i < actors.size(); ++i) {
+			// actor_f = ((String) actors.get(i)).split("\\s+");
+			// }
+			// if (actor_f.length == 1) {
+			// if(cnt>0)
+			// tmpS.append(" OR ");
+			// tmpS.append("(s.last_name='"+actor_f[0]+"' AND
+			// m.title='"+movie.getTitle()+"')");
+			//
+			//// tmpG.append("(s.last_name='actor_f[0]' AND
+			// m.title='movie.getTitle()';)");
+			// }
+			// else if(actor_f.length > 1)
+			// {
+			// String fn=actor_f[0];
+			// String ln=actor_f[1];
+			// for(int j=2; j<actor_f.length;++j)
+			// {
+			// ln+=" "+actor_f[j];
+			// }
+			// if(cnt>0)
+			// tmpS.append(" OR ");
+			// tmpS.append("(s.last_name='"+ln+"' AND "+"s.first_name='"+fn+"'
+			// AND m.title='"+movie.getTitle()+"')");
+			// }
+			//
+			// if(++cnt>100)
+			// {
+			// tmpS.append(";\n");
+			//
+			//
+			// tmpS.append("INSERT INTO stars_in_movies (star_id, movie_id) "
+			// + " SELECT s.id, m.id " + " FROM movies AS m,stars AS s WHERE ");
+			// cnt=0;
+			//
+			// }
+			// }
+			//////////
+
+			// // System.out.println(tmp2);
+			// s.addBatch(tmp2);
+			// }
+			// List actors = (List) movieActors.get(movie.getTitle());
+			// // System.out.println(a);
+			// if (actors != null)
+			// for (int i = 0; i < actors.size(); ++i) {
+			// String[] actor_f = ((String) actors.get(i)).split("\\s+");
+			// // System.out.println( actors.get(i));
+			// String tmp3 = "";
+			// if (actor_f.length == 1) {
+			// tmp3 = "INSERT INTO stars_in_movies (star_id, movie_id) " +
+			// "SELECT s.id, m.id "
+			// + "FROM movies AS m,stars AS s " + "WHERE s.last_name='" +
+			// actor_f[0] + "'" + " AND "
+			// + " m.title='" + movie.getTitle() + "';";
+			// // System.out.println(tmp3);
+			// } else if (actor_f.length > 1) {
+			// String fn = actor_f[0];
+			// String ln = actor_f[1];
+			// for (int j = 2; j < actor_f.length; ++j) {
+			// ln = " " + actor_f[j];
+			// }
+			// tmp3 = "INSERT INTO stars_in_movies (star_id, movie_id) " +
+			// "SELECT s.id, m.id "
+			// + "FROM movies AS m,stars AS s " + "WHERE s.last_name='" + fn +
+			// "'" + " AND "
+			// + "s.first_name='" + ln + "' AND " + " m.title='" +
+			// movie.getTitle() + "';";
+			// // System.out.println(tmp3);
+			// }
+			//
+			// s.addBatch(tmp3);
+			// }
 
 		}
+		tmp.append(";");
+
+		s.addBatch(tmp.toString());
+
 		try {
 			s.executeBatch();
 			connection.commit();
-			s.close();
-			System.out.println("DONE WITH BATCH 1");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		// Insert Genres
+
+		tmp = new StringBuilder("INSERT INTO genres (name) VALUES ");
+		Iterator names = genres.iterator();
+		if (names.hasNext()) {
+
+			String name = names.next().toString();
+
+			tmp.append("('" + name + "')");
+		}
+
+		while (names.hasNext()) {
+			String name = names.next().toString();
+
+			tmp.append("," + "('" + name + "')");
+
+		}
+		tmp.append(";");
+		// System.out.println(tmp);
+		s.addBatch(tmp.toString());
+		try {
+			s.executeBatch();
+			connection.commit();
+			// s.close();
+			// System.out.println("DONE WITH BATCH 1");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		// Insert Stars
+
+		tmp = new StringBuilder("INSERT INTO stars (first_name,last_name) VALUES ");
+		Iterator stars = myActors.iterator();
+		if (stars.hasNext()) {
+
+			Star actor = (Star) stars.next();
+
+			tmp.append("('" + actor.getFirst_name() + "','" + actor.getLast_name() + "')");
+		}
+
+		while (stars.hasNext()) {
+			Star actor = (Star) stars.next();
+
+			tmp.append("," + "('" + actor.getFirst_name() + "','" + actor.getLast_name() + "')");
+
+		}
+		tmp.append(";");
+		// System.out.println(tmp);
+		s.addBatch(tmp.toString());
+		try {
+			s.executeBatch();
+			connection.commit();
+			// s.close();
+			// System.out.println("DONE WITH BATCH 1");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		// Insert Stars
-		java.sql.Statement s2 = connection.createStatement();
-		Iterator stars = myActors.iterator();
-		while (stars.hasNext()) {
-			Star actor = (Star) stars.next();
-			String[] specialS = { "first_name", "last_name" };
-			// actor.setFirst_name(actor.getFirst_name().replace("\\",
-			// "").replace("\'", "\'\'"));
-			// actor.setLast_name(actor.getLast_name().replace("\\",
-			// "").replace("\'", "\'\'"));
-			String[] vals = { actor.getFirst_name(), actor.getLast_name() };
+		// // java.sql.Statement s2 = connection.createStatement();
+		// Iterator stars = myActors.iterator();
+		// while (stars.hasNext()) {
+		// Star actor = (Star) stars.next();
+		// String[] specialS = { "first_name", "last_name" };
+		// // actor.setFirst_name(actor.getFirst_name().replace("\\",
+		// // "").replace("\'", "\'\'"));
+		// // actor.setLast_name(actor.getLast_name().replace("\\",
+		// // "").replace("\'", "\'\'"));
+		// String[] vals = { actor.getFirst_name(), actor.getLast_name() };
+		//
+		// tmp = "";
+		//
+		// if (actor.getFirst_name() == null || actor.getFirst_name() == null ||
+		// actor.getFirst_name().equals("")
+		// || actor.getFirst_name().equals("")) {
+		//
+		// actor.setFirst_name("");
+		// }
+		// tmp = "INSERT INTO " + tblName[1] + " (" + specialS[0] + "," +
+		// specialS[1] + ")" + " SELECT '" + vals[0]
+		// + "','" + vals[1] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[1]
+		// + " WHERE " + specialS[0]
+		// + "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1] + "');";
+		//
+		// s.addBatch(tmp);
+		//
+		// }
+		// try {
+		// s.executeBatch();
+		// connection.commit();
+		// s.close();
+		// System.out.println("DONE WITH BATCH 2");
+		// } catch (SQLException e) {
+		// e.printStackTrace();
+		// }
+		// Now making a map of the IDs
+		connection.setAutoCommit(true);
 
-			String tmp = "";
+		HashMap<String, Integer> movieToId = new HashMap<String, Integer>();
+		HashMap<String, Integer> actorToId = new HashMap<String, Integer>();
+		HashMap<String, Integer> genresToId = new HashMap<String, Integer>();
+		java.sql.Statement select = connection.createStatement();
 
-			if (actor.getFirst_name() == null || actor.getFirst_name() == null || actor.getFirst_name().equals("")
-					|| actor.getFirst_name().equals("")) {
-
-				actor.setFirst_name("");
-			}
-			tmp = "INSERT INTO " + tblName[1] + " (" + specialS[0] + "," + specialS[1] + ")" + " SELECT '" + vals[0]
-					+ "','" + vals[1] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[1] + " WHERE " + specialS[0]
-					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1] + "');";
-
-			s2.addBatch(tmp);
+		ResultSet result = (ResultSet) select.executeQuery("SELECT * FROM movies m");
+		while (result.next()) {
+			String key = result.getString(2) + result.getString(4);
+			int value = result.getInt(1);
+			movieToId.put(key, value);
 
 		}
+		result = (ResultSet) select.executeQuery("SELECT * FROM stars");
+		while (result.next()) {
+			String key = result.getString(2) + " " + result.getString(3);
+			int value = result.getInt(1);
+			actorToId.put(key, value);
+
+		}
+		result = (ResultSet) select.executeQuery("SELECT * FROM genres");
+		while (result.next()) {
+			String key = result.getString(2);
+			int value = result.getInt(1);
+			genresToId.put(key, value);
+
+		}
+		//
+		connection.setAutoCommit(false);
+		// END THE MAP
+		//
+		StringBuilder tmpS = new StringBuilder((String) ("INSERT INTO stars_in_movies VALUES "));
+		int itAmt = 0;
+
+		// while (it.hasNext()) {
+		// Map.Entry pair = (Map.Entry)it.next();
+		// System.out.println(pair.getKey() + " = " + pair.getValue());
+		// pair.getValue();
+		//
+		// for(String anActor:pair.getValue())
+		// {}
+		//// tmpS.append(" ("+actorToId.get()+")");
+		// it.remove(); // avoids a ConcurrentModificationException
+		// }
+
+		for (Map.Entry<String, List> entry : movieToActors.entrySet()) {
+
+			// System.out.println("ID of Movie = " + entry.getKey() + ", I = " +
+			// entry.getValue());
+			// System.out.println("POPO");
+
+			for (Object actors : entry.getValue()) {
+				String fn = "";
+				String ln = "";
+				String[] splitName = actors.toString().split("\\s+");
+				if (splitName.length == 1) {
+				}
+
+				// System.out.println("I = " + movieToId.get(entry.getKey()) +
+				// ", ID of Actor = " + actorToId.get(actors));
+				if (movieToId.get(entry.getKey()) != null && actorToId.get(actors) != null) {
+					if (itAmt++ > 0) {
+						tmpS.append(", ");
+					}
+					tmpS.append("(" + actorToId.get(actors) + "," + movieToId.get(entry.getKey()) + ")");
+				}
+				// System.out.println(actors);
+			}
+		}
+
+		tmpS.append(";");
+
+		s.addBatch(tmpS.toString());
 		try {
-			s2.executeBatch();
+			s.executeBatch();
 			connection.commit();
-			s2.close();
-			System.out.println("DONE WITH BATCH 2");
+			// s.close();
+			// System.out.println("DONE WITH BATCH 1");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		// Insert movies
-		
-		java.sql.Statement s3 = connection.createStatement();
-		Iterator movies = myMovies.iterator();
+
+		// The genres
+		movies = myMovies.iterator();
+		StringBuilder tmpG = new StringBuilder("INSERT INTO genres_in_movies VALUES ");
+		// StringBuilder tmpS = new StringBuilder((String) ("INSERT INTO
+		// stars_in_movies (star_id, movie_id) "
+		// + " SELECT s.id, m.id " + " FROM movies AS m,stars AS s WHERE "));
+
+		// System.out.println(tmpS);
+
+		/*
+		 * genre_id:integer, referencing genres.id movie_id:integer, referencing
+		 * movies.id
+		 */
+		cnt = 0;
+		int id;
 		while (movies.hasNext()) {
 			Movie movie = (Movie) movies.next();
-			String[] specialS = { "title", "year","director" };
-			// title:El grand cavalcodos, Year:-404, Director:Bunuel
-			String[] vals = { movie.getTitle(), Integer.toString(movie.getYear()),movie.getDirector() };
-			
-			String tmp = "";
-
-			tmp = "INSERT INTO " + tblName[2] + " (" + specialS[0] + "," + specialS[1]+ "," + specialS[2] + ")" + " SELECT '" + vals[0]
-					+ "','" + vals[1]+ "','" + vals[2] + "' WHERE NOT EXISTS(SELECT * FROM " + tblName[2] + " WHERE " + specialS[0]
-					+ "='" + vals[0] + "' AND " + specialS[1] + "='" + vals[1]+ "' AND " + specialS[2] + "='" + vals[2] + "');";
-//			System.out.println(tmp);
-			
-			s3.addBatch(tmp);
+			try {
+				id = movieToId.get(movie.getTitle() + movie.getDirector());
+//				System.out.println(id);
+				for(Object genre:movie.getCats())
+				{
+					if(cnt++>0)
+					{
+						tmpG.append(", ");
+					}
+					String added=("(" + genresToId.get(genre.toString()) + "," + id + ")");
+//					System.out.println(added);
+					tmpG.append(added);
+				}
+			} catch (NullPointerException e) {
+			}
 
 		}
+		tmpG.append(";");
+
+		s.addBatch(tmpG.toString());
 		try {
-			s3.executeBatch();
+			s.executeBatch();
 			connection.commit();
-			s3.close();
-			System.out.println("DONE WITH BATCH 3");
+			// s.close();
+			// System.out.println("DONE WITH BATCH 1");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-	}
+	}// END PARSE
 
 	private void printMovieStarData() {
 
-		System.out.println(movieActors);
+		System.out.println(movieToActors);
 		// for(Object actors: movieActors.values())
 		// {
 		// System.out.println(actors);
@@ -424,8 +687,13 @@ public class SaxParserMain extends DefaultHandler {
 
 		} else if (qName.equalsIgnoreCase("filmc")) {
 			// System.out.println(actorsIn);
-			movieActors.put(movie, actorsIn);
+			movieToActors.put(movie + tmpDirector, actorsIn);
 			actorsIn = new ArrayList();
+
+		} else if (qName.equalsIgnoreCase("is")) {
+			// System.out.println(actorsIn);
+			tmpDirector = tempVal;
+			// System.out.println(tmpDirector);
 
 		}
 
