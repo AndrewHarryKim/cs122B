@@ -31,6 +31,7 @@ public class SaxParserActor extends DefaultHandler{
 	
 	//to maintain context
 	private Star tempStar;
+	private Movie tempMovie;
 	
 	
 	public SaxParserActor(){
@@ -190,14 +191,15 @@ public class SaxParserActor extends DefaultHandler{
 //		{
 //			tempStar.setDirector(tempVal);
 //		}
-//		else if(qName.equalsIgnoreCase("cats")) {
-//			tempStar.setCats(catInActors);
-//			catInActors=new ArrayList<>();
-//		}
-//		else if(qName.equalsIgnoreCase("cat")) {
-//			genres.add(tempVal);
-//			catInActors.add(tempVal);
-//		}
+		else if(qName.equalsIgnoreCase("cats")) {
+			
+			tempMovie.setCats(catInActors);
+			catInActors=new ArrayList<>();
+		}
+		else if(qName.equalsIgnoreCase("cat")) {
+			genres.add(tempVal);
+			catInActors.add(tempVal);
+		}
 		
 	}
 	
