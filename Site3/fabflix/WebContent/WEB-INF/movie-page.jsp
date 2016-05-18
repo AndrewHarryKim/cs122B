@@ -20,6 +20,7 @@
 <%ArrayList<String> starNames = (ArrayList<String>)request.getAttribute("starNames"); %>
 <%ArrayList<Integer> starIDs = (ArrayList<Integer>)request.getAttribute("starIDs"); %>
 <%@include file="site-header.jsp" %>
+<%@include file="search-box.jsp" %>
 	<div>
 		<h2>${star}</h2>
 		<div class="starInfoDiv"><img src="${banner_url}" alt="${title} Photo"/></div>

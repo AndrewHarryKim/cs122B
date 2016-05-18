@@ -100,31 +100,35 @@ public class AddMovie extends HttpServlet {
 				cStmt.registerOutParameter(9, java.sql.Types.VARCHAR);
 				cStmt.execute();
 
-				request.setAttribute("add_movie_message", "Movie: " + title + " (" );
+				String message = "Movie: " + title + " (";
 				if("no".equals(cStmt.getString(7)))
-					request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "not ");
-				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "added)<br/> ");
+					message += "already exiests, not ";
+				message += "added)<br/> ";
 				
-				request.setAttribute("add_movie_message", 
-						request.getAttribute("add_movie_message") + "star: " + starFirst + " " + starLast + " (");
+				message +=  "star: " + starFirst + " " + starLast + " (";
 				if("no".equals(cStmt.getString(8)))
-					request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "not ");
-				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "added)<br/> ");
+					message += "already exiests, not ";
+				message += "added)<br/> ";
 				
-				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "genre: " + genre + " (");
+				message += "genre: " + genre + " (";
 				if("no".equals(cStmt.getString(9)))
-					request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "not ");
-				request.setAttribute("add_movie_message", request.getAttribute("add_movie_message") + "added)<br/> ");
+					message += "already exiests, not ";
+				message += "added)<br/> ";
+
+				request.setAttribute("add_movie_message", message);
 	    	} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
+	    }
+	    else
+	    {
+			request.setAttribute("add_movie_message", "Please enter a number for year");
 	    }
 	    
 	    
 	    
 	    
-	    
-	    
+
 		
 		
 		

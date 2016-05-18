@@ -54,7 +54,6 @@
 
 						out.println("	<td></td>");
 						out.println("</tr>");
-						
 						for (CartItem C : cart.cart) {
 							out.println("<tr>");
 							out.println("	<td>" + C.title + "</td>");

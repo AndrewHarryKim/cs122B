@@ -345,7 +345,6 @@ public class MovieList extends HttpServlet {
 				if(argumentTypes.get(i).equals(STRING_ARG_TYPE))
 				{
 						prepStmt.setString(i+1, argumentList.get(i));
-					
 				} else
 				{
 					try{

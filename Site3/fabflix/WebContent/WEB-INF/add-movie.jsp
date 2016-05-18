@@ -46,7 +46,7 @@
                         <td>Star First-Name</td>
                         <td><input type="text" name="add-starfirstname" value="" /></td>
                         <%if(request.getAttribute("noStarFirst") != null) {%>
-	                        <%if((Boolean)request.getAttribute("noStar")){ %><td>*Enter a Star First-Name</td>
+	                        <%if((Boolean)request.getAttribute("noStarFirst")){ %><td>*Enter a Star First-Name</td>
 	                        <%} %>
                         <%} %>
                     </tr>
@@ -54,7 +54,7 @@
                         <td>Star Last-Name</td>
                         <td><input type="text" name="add-starlastname" value="" /></td>
                         <%if(request.getAttribute("noStarLast") != null) {%>
-	                        <%if((Boolean)request.getAttribute("noStar")){ %><td>*Enter a Star Last-Name</td>
+	                        <%if((Boolean)request.getAttribute("noStarLast")){ %><td>*Enter a Star Last-Name</td>
 	                        <%} %>
                         <%} %>
                     </tr>
@@ -73,15 +73,14 @@
                 </tbody>
 
             </table>
-            <% 
+        </form>
+        <% 
                 if (request.getAttribute("add_movie_message") == null || ("".equals((String)request.getAttribute("add_movie_message")))) {
                     //out.println("");
                 } 
                 else {
-                    out.println("<br/><br/><div class='center'>"+request.getAttribute("add_movie_message")+"</div>");
+                    out.println("<br/><br/><div class='center'>"+(String)request.getAttribute("add_movie_message")+"</div>");
                 }
             %>
-            
-        </form>
 </body>
 </html>

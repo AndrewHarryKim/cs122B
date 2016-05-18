@@ -12,6 +12,7 @@
 	
 	<%@include file="site-header.jsp" %>
 	
+	<%@include file="search-box.jsp" %>
 	<span class="welcomeHeader">Welcome, <%=session.getAttribute("first_name")%> </span>
 	<%
 		out.println("</br>");

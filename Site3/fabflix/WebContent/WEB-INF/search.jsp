@@ -4,16 +4,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>fabflix - Search Movies</title>
-<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>fabflix - Search Movies</title>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<script type="text/javascript" src="js/jquery1.12.3.js"></script>
+		
 </head>
 <body>
 
 <%@include file="site-header.jsp" %>
-	<div class="searchContainer">
-		
+	<div class="searchContainer">	
 	</div>
+<%@include file="search-box.jsp" %>
 	<input 
 			id="nameSearchBox" 
 			class="dbSearchBox" 
