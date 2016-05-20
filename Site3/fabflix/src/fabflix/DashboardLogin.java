@@ -48,9 +48,11 @@ public class DashboardLogin extends HttpServlet {
 		        {
 					dispatcher = getServletContext().getRequestDispatcher(Global.dashboardServletPath);
 					dispatcher.forward(request, response);
+					return;
 		        }
 				dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/dashboard-login.jsp");
 				dispatcher.forward(request, response);
+				return;
 			}
 			else
 			{
@@ -71,12 +73,15 @@ public class DashboardLogin extends HttpServlet {
 				        session.setAttribute("employee_email",email);
 						dispatcher = getServletContext().getRequestDispatcher(Global.dashboardServletPath);
 						dispatcher.forward(request, response);
+
+						return;
 					}
 					else
 					{
 						request.setAttribute("dashboard_error_message", "Invalid username or password");
 						dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/dashboard-login.jsp");
 						dispatcher.forward(request, response);
+						return;
 					}
 				}
 				else
@@ -88,6 +93,7 @@ public class DashboardLogin extends HttpServlet {
 						request.setAttribute("dashboard_error_message", "Invalid reCAPTCHA, you must be a robot");
 					dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/dashboard-login.jsp");
 					dispatcher.forward(request, response);
+					return;
 				}
 			}
 		} catch (SQLException | ClassNotFoundException e) {

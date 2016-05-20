@@ -11,6 +11,7 @@
 </head>
 <body>
 <%@include file="site-header.jsp" %>
+<%@include file="search-box.jsp" %>
 
 <%ArrayList<String> movieTitles = (ArrayList<String>)request.getAttribute("movieTitles"); %>
 <%ArrayList<Integer> movieIDs = (ArrayList<Integer>)request.getAttribute("movieIDs"); %>

@@ -11,8 +11,8 @@
 </head>
 <body>
 <%@include file="site-header.jsp" %>
+<%@include file="search-box.jsp" %>
 <%
-	// This portion of the code is vital to make it so the user cannot access a page w/o being logged in.
    if (request.getParameter("by") == null) 
     {
 		String redirectURL = request.getContextPath() +  Global.homeServletPath;

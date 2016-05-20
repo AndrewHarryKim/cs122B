@@ -48,6 +48,7 @@ body{
 
 div.movieName{
 	width: 15%;
+	position: relative;
 }
 div.movieName:hover{
 	color: white;
@@ -122,6 +123,10 @@ div.movieGenreList{
 	position: absolute;
 	right: 1%;
 }
+.absolute-left{
+	position: absolute;
+	left: 1%;
+}
 .welcomeHeader{
 	font-size: 20px;
 }
@@ -134,3 +139,34 @@ div.movieGenreList{
 .loginTable th {
     padding: 3px;
 }
+
+#searchBox{
+    position: absolute;
+    right: 0;
+}
+
+.autoComplete{
+    position: absolute;
+    right: 0;
+    width: 200px;
+    box-shadow: -3px 3px 4px rgba(0, 0, 0, .2);
+    padding: 10px;
+    background: white;
+	border: 1px solid black;
+	background-color: white;
+}
+.autoComplete tr{
+	border-bottom: 1px solid black;
+	display: block;
+	
+}
+.autoComplete tr:last-child{
+	border-bottom: none;
+}
+.movieHoverDiv{
+	color: black;
+	background-color: white;
+	z-index: 999;
+}
+
+

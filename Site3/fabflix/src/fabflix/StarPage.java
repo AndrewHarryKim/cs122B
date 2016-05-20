@@ -107,6 +107,7 @@ public class StarPage extends HttpServlet {
 			{
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/empty-star-page.jsp");
 				dispatcher.forward(request, response);
+				return;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -11,6 +11,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 	<title>Search Movies</title>
+	<script type="text/javascript" src="js/jquery-1.12.3.js"></script>
+	<script type="text/javascript" src="js/movie-hover.js"></script>
 </head>
 <%if(request.getParameter("addToCart") != null && !request.getParameter("addToCart").equals("")){ %>
 <body onload='updateQueryStringParameter("addToCart", "")'>
@@ -44,6 +46,7 @@
 			/>
 	</div>
 	
+<%@include file="search-box.jsp" %>
 		<div class="movieListHeader">
 			<div>Movie ID</div> 
 			<div class="movieName" onclick='updateQueryStringParameter("orderby", "title")'>Movie Title</div> 
@@ -63,7 +66,12 @@
 						value="Add To Cart" 
 						onclick='updateQueryStringParameter("addToCart",<%=rs.getInt(1)%> )' />
 				</div> 
-				<div class="movieInfoDiv movieName"> <a href="/fabflix/MoviePage?movieid=<%=rs.getInt(1)%>"><%=rs.getString(2)%></a> </div> 
+				<div class="movieInfoDiv movieName"> 
+					<a class="movieHover" id="movieHoverName<%=rs.getInt(1)%>" movieID="<%=rs.getInt(1)%>" href="/fabflix/MoviePage?movieid=<%=rs.getInt(1)%>">
+						<%=rs.getString(2)%>
+					</a> 
+					<div class="absolute-left movieHoverDiv" id="movieHoverDiv<%=rs.getInt(1)%>"></div>
+				</div> 
 				<div class="movieInfoDiv"> <%=rs.getString(3)%> </div>  
 				<div class="movieInfoDiv"> <%=rs.getString(4)%> </div>
 				<div class="movieStarList movieInfoDiv">

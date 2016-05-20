@@ -44,7 +44,7 @@
                     //out.println("");
                 } 
                 else {
-                    out.println("<br/><br/><div class='center'>"+request.getAttribute("insert_star_message")+"</div>");
+                    out.println("<br/><br/><div class='center'>"+(String)request.getAttribute("insert_star_message")+"</div>");
                 }
             %>
             

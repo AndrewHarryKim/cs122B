@@ -16,29 +16,20 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.sun.rowset.CachedRowSetImpl;
 
 
-@WebServlet("/MoviePage")
-public class MoviePage extends HttpServlet {
+@WebServlet("/MovieHover")
+public class MovieHover extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
-
-    public MoviePage() {
+	
+    public MovieHover() {
         super();
     }
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(true);
-	    if ((session.getAttribute("email") == null) || ("".equals(session.getAttribute("email")))) {
-			String redirectURL = request.getContextPath() + Global.loginServletPath;
-	        response.sendRedirect(redirectURL);
-	        return;
-	    }
-		
 		Connection conn = null;
 		Statement stmt = null;
 		PreparedStatement prepStmt = null;
@@ -54,32 +45,11 @@ public class MoviePage extends HttpServlet {
 		}
 		try {
 			crs = new CachedRowSetImpl();
-			conn = DriverManager.getConnection(dburl, Global.DB_USER, Global.DB_PASS);
-			
-			
-			if(request.getParameter("addToCart") != null && !request.getParameter("addToCart").equals(""))
+			conn = DriverManager.getConnection(Global.dburl, Global.DB_USER, Global.DB_PASS);
+		
+			if(request.getParameter("id") !=null && request.getParameter("id") != "")
 			{
-				CartList cart = (CartList)request.getSession().getAttribute("cart");
-				prepStmt = conn.prepareStatement("select * from movies m where m.id= ? ;");
-				prepStmt.setString(1, request.getParameter("addToCart"));
-				cartQuery = prepStmt.executeQuery();
-				
-				cartQuery.first();
-				CartItem cartItem = new CartItem(cartQuery.getInt(1), 
-													cartQuery.getString(2),
-													cartQuery.getInt(3),
-													cartQuery.getString(4),
-													cartQuery.getString(5),
-													cartQuery.getString(6));
-				cart.addToCart(cartItem);
-				request.getSession().setAttribute("cart", cart);
-				
-				prepStmt.close();
-				prepStmt = null;
-			}
-			if(request.getParameter("movieid") !=null && request.getParameter("movieid") != "")
-			{
-				String movieid = request.getParameter("movieid");
+				String movieid = request.getParameter("id");
 				prepStmt = conn.prepareStatement("SELECT m.id, m.title, m.year, m.director, m.banner_url" +
 						" FROM movies m" +
 						" WHERE m.id= ?;");
@@ -122,36 +92,49 @@ public class MoviePage extends HttpServlet {
 				prepStmt.close();
 				prepStmt = null;
 				
-				RequestDispatcher dispatcher = null;
-				
-				if(request.getParameter("addToCart") != null && !request.getParameter("addToCart").equals(""))
-				{
-					dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/movie-page.jsp?addToCart=" + request.getParameter("addToCart"));
-				}
-				else
-				{
-					dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/movie-page.jsp");
-				}
 
-				request.setAttribute("movie_id", crs.getInt(1));
-				request.setAttribute("title", crs.getString(2));
-				request.setAttribute("year", crs.getString(3));
-				request.setAttribute("director", crs.getString(4));
-				request.setAttribute("banner_url", crs.getString(5));
-				request.setAttribute("genreNames", genreNames);
-				request.setAttribute("genreIDs", genreIDs);
-				request.setAttribute("starNames", starNames);
-				request.setAttribute("starIDs", starIDs);
-				dispatcher.forward(request, response);
+				Integer movie_id = crs.getInt(1);
+				String title = crs.getString(2);
+				String year = crs.getString(3);
+				String director = crs.getString(4);
+				String banner_url = crs.getString(5);
 				
-				
-				
+				PrintWriter out = response.getWriter();
+				out.append("<div>");
+				out.append("	<div><img src='" + banner_url + "' alt='" + title + " Photo'/></div>");
+				out.append("	<div>");
+				out.append("		<div><div class='starInfoHeader'>Movie ID#:</div> " + movie_id + "");
+				out.append("		</div>");
+				out.append("		<div>Title: " + title + "</div>");
+				out.append("		<div>Year of Release: " + year + "</div>");
+				out.append("		<div>Director: " + director + "</div>");
+				out.append("		<div>Genres:</div>");
+				out.append("		<div>");
+				out.append("			<div class='indent'>");
+										for(int i = 0;  i < genreNames.size(); i++) {
+				out.append("					<a href='" + getServletContext() + "/MovieList?type=genre&id=" + genreIDs.get(i) + "'>" + genreNames.get(i) + "</a>");
+				out.append("					</div><div class='indent'>");
+										}
+				out.append("			</div>");
+				out.append("		</div> <br/>");
+				out.append("		<div>Stars:</div>");
+				out.append("		<div>");
+				out.append("			<div class='indent'>");
+											for(int i = 0;  i < starNames.size(); i++) {
+				out.append("					<a href='" + getServletContext() + "/StarPage?starname=" + starNames.get(i) + "'>" + starNames.get(i) + "</a>");
+				out.append("					</div><div class='indent'>");
+											}
+				out.append("			</div>");
+				out.append("		</div>");
+				out.append("	</div>");
+				out.append("</div>");
 			}
 			else
 			{
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/empty-star-page.jsp");
 				dispatcher.forward(request, response);
 			}
+			response.getWriter().append("Served at: ").append(request.getContextPath());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
