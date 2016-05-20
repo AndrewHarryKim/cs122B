@@ -9,6 +9,7 @@
 	<title>Insert Star</title>
 </head>
 <body class="employee-body">
+<%@include file="dashboard-header.jsp" %>
 	<form method="post" action=<%=request.getContextPath() + Global.addMovieServletPath %>>
             <table class="center loginTable" border="1">
                 <thead>
@@ -42,10 +43,18 @@
                         <%} %>
                     </tr>
                     <tr>
-                        <td>Star Name</td>
-                        <td><input type="text" name="add-starname" value="" /></td>
-                        <%if(request.getAttribute("noStar") != null) {%>
-	                        <%if((Boolean)request.getAttribute("noStar")){ %><td>*Enter a Star Name</td>
+                        <td>Star First-Name</td>
+                        <td><input type="text" name="add-starfirstname" value="" /></td>
+                        <%if(request.getAttribute("noStarFirst") != null) {%>
+	                        <%if((Boolean)request.getAttribute("noStar")){ %><td>*Enter a Star First-Name</td>
+	                        <%} %>
+                        <%} %>
+                    </tr>
+                    <tr>
+                        <td>Star Last-Name</td>
+                        <td><input type="text" name="add-starlastname" value="" /></td>
+                        <%if(request.getAttribute("noStarLast") != null) {%>
+	                        <%if((Boolean)request.getAttribute("noStar")){ %><td>*Enter a Star Last-Name</td>
 	                        <%} %>
                         <%} %>
                     </tr>
@@ -58,7 +67,7 @@
                         <%} %>
                     </tr>
                     <tr>
-                        <td><input type="submit" value="Login" /></td>
+                        <td><input type="submit" value="Submit" /></td>
                         <td><input type="reset" value="Reset" /></td>
                     </tr>
                 </tbody>

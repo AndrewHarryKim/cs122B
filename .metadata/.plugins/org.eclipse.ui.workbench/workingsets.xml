@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workingSetManager>
+<workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1463728590446_1" label="mysql-connector-java" name="mysql-connector-java">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/mysql-connector-java" type="4"/>
+</workingSet>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1459311096070_0" label="Window Working Set" name="Aggregate for window 1459311096069"/>
 </workingSetManager>
