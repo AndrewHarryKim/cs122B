@@ -29,6 +29,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +52,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private String login_url="google.com";
+    private final String DB_NAME="";
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -197,6 +208,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
+
+        String dbName = "moviedb";
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Connection connection = null;
+
+            connection = DriverManager.getConnection("jdbc:mysql://"+login_url + dbName, user, pass);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
         return password.length() > 4;
     }
 
