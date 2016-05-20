@@ -57,6 +57,10 @@ public class AppLogin extends HttpServlet {
 			    	out.write("Invalid Username or Password. Try Again");
 			    }
 	    	}
+		    else 
+		    {
+		    	out.write("Please enter a username and password");
+		    }
 	    } catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		} finally {

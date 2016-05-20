@@ -113,9 +113,8 @@ public class Login extends HttpServlet {
 			    PreparedStatement preparedStatement = con.prepareStatement("select * from customers where email = ? and password = ?;");
 			    preparedStatement.setString(1, email );
 			    preparedStatement.setString(2, pwd );
-			   
+
 			    rs = preparedStatement.executeQuery();
-			    System.out.println(preparedStatement);
 			    if (rs.next()&& valid) 
 			    {
 			        
@@ -170,17 +169,12 @@ public class Login extends HttpServlet {
 					con.close();
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	    }
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
