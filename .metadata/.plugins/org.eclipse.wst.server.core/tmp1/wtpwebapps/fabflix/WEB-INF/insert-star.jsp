@@ -9,6 +9,7 @@
 	<title>Insert Star</title>
 </head>
 <body class="employee-body">
+<%@include file="dashboard-header.jsp" %>
 	<form method="post" action=<%=request.getContextPath() + Global.insertStarServletPath %>>
             <table class="center loginTable" border="1">
                 <thead>
@@ -30,7 +31,7 @@
                         <td><input type="text" name="insert-star-photo-url" value=""  /></td>
                     </tr>
                     <tr>
-                        <td><input type="submit" value="Login" /></td>
+                        <td><input type="submit" value="Submit" /></td>
                         <td><input type="reset" value="Reset" /></td>
                     </tr>
                    

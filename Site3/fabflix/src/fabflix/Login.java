@@ -113,8 +113,9 @@ public class Login extends HttpServlet {
 			    PreparedStatement preparedStatement = con.prepareStatement("select * from customers where email = ? and password = ?;");
 			    preparedStatement.setString(1, email );
 			    preparedStatement.setString(2, pwd );
-
+			   
 			    rs = preparedStatement.executeQuery();
+			    System.out.println(preparedStatement);
 			    if (rs.next()&& valid) 
 			    {
 			        

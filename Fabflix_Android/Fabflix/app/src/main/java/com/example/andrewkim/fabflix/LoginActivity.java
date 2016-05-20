@@ -210,18 +210,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //TODO: Replace this with your own logic
 
         String dbName = "moviedb";
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            Connection connection = null;
-
-            connection = DriverManager.getConnection("jdbc:mysql://"+login_url + dbName, user, pass);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver").newInstance();
+//            Connection connection = null;
+//
+//            connection = DriverManager.getConnection("jdbc:mysql://"+login_url + dbName, user, pass);
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
 
         return password.length() > 4;
