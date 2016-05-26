@@ -7,6 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +17,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 @WebServlet("/_dashboard")
 public class DashboardLogin extends HttpServlet {
@@ -30,6 +34,11 @@ public class DashboardLogin extends HttpServlet {
 		Connection conn = null;
 		ResultSet employeeMatches = null;
 		PreparedStatement preparedStatement = null; 
+
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
 		
 		String email = request.getParameter("employee_email");
 		String password = request.getParameter("employee_password");
@@ -39,8 +48,11 @@ public class DashboardLogin extends HttpServlet {
 		Boolean valid = Login.verify(gRecaptchaResponse);
 		
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		    conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", Global.DB_USER, Global.DB_PASS);
+			initialContext = new InitialContext();
+			environmentContext = (Context) initialContext.lookup("java:comp/env");
+			dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+			conn = dataSource.getConnection();
+			
 			session = request.getSession();
 			if(email == null || "".equals(email))
 			{
@@ -96,8 +108,28 @@ public class DashboardLogin extends HttpServlet {
 					return;
 				}
 			}
-		} catch (SQLException | ClassNotFoundException e) {
+		} catch (SQLException | NamingException e) {
 			e.printStackTrace();
+		} finally {
+			try{
+				if(conn != null)
+				{
+					conn.close();
+				}
+				conn = null;
+				if(employeeMatches != null)
+				{
+					employeeMatches.close();
+				}
+				employeeMatches = null;
+				if(preparedStatement != null)
+				{
+					preparedStatement.close();
+				}
+				preparedStatement = null;
+			} catch (SQLException e){
+				e.printStackTrace();
+			}
 		}
 	}
 

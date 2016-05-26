@@ -8,6 +8,9 @@ import java.net.URL;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import fabflix.Global;
 import java.sql.*;
@@ -87,8 +91,13 @@ public class Login extends HttpServlet {
 
 		
         RequestDispatcher dispatcher = null;
-        Connection con = null;
+        Connection conn = null;
         ResultSet rs = null;
+
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
 
 		String email = request.getParameter("email");    
 	    String pwd = request.getParameter("password");
@@ -99,18 +108,20 @@ public class Login extends HttpServlet {
 	    try {
 	    	if(session.getAttribute("email") != null && !("".equals(session.getAttribute("email")))  )
 	    	{
-		        String redirectURL = request.getContextPath() + Global.homeServletPath;
+		        String redirectURL = getServletContext().getContextPath() + Global.homeServletPath;
 		        response.sendRedirect(redirectURL);
 	    	}
 	    	else if(  (email != null && !("".equals(email))) &&
 	    			(pwd != null && !("".equals(pwd))))
 	    	{
-				Class.forName("com.mysql.jdbc.Driver");
-			    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", Global.DB_USER, Global.DB_PASS);
+				initialContext = new InitialContext();
+				environmentContext = (Context) initialContext.lookup("java:comp/env");
+				dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+				conn = dataSource.getConnection();
 			    
 		
 			    String selectSQL = "";
-			    PreparedStatement preparedStatement = con.prepareStatement("select * from customers where email = ? and password = ?;");
+			    PreparedStatement preparedStatement = conn.prepareStatement("select * from customers where email = ? and password = ?;");
 			    preparedStatement.setString(1, email );
 			    preparedStatement.setString(2, pwd );
 
@@ -139,7 +150,7 @@ public class Login extends HttpServlet {
 			        session.setAttribute("cart", cart);
 			        //out.println("welcome " + email);
 			        //out.println("<a href='logout.jsp'>Log out</a>");
-			        String redirectURL = request.getContextPath() + Global.homeServletPath;
+			        String redirectURL = getServletContext().getContextPath() + Global.homeServletPath;
 			        response.sendRedirect(redirectURL);
 			    } 
 			    else 
@@ -156,7 +167,7 @@ public class Login extends HttpServlet {
 				dispatcher = getServletContext().getRequestDispatcher(Global.loginJSPPath);
 		        dispatcher.forward(request, response);
 	    	}
-	    } catch (ClassNotFoundException | SQLException e) {
+	    } catch ( SQLException | NamingException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -164,10 +175,12 @@ public class Login extends HttpServlet {
 				{
 						rs.close();
 				}
-				if(con != null)
+				rs = null;
+				if(conn != null)
 				{
-					con.close();
+					conn.close();
 				}
+				conn = null;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

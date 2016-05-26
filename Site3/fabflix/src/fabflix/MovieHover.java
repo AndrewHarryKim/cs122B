@@ -10,12 +10,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import com.sun.rowset.CachedRowSetImpl;
 
@@ -38,14 +42,18 @@ public class MovieHover extends HttpServlet {
 		ResultSet starList = null;
 		ResultSet genreList = null;
 		ResultSet cartQuery = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		}
+		
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
+        
 		try {
 			crs = new CachedRowSetImpl();
-			conn = DriverManager.getConnection(Global.dburl, Global.DB_USER, Global.DB_PASS);
+			initialContext = new InitialContext();
+			environmentContext = (Context) initialContext.lookup("java:comp/env");
+			dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+			conn = dataSource.getConnection();
 		
 			if(request.getParameter("id") !=null && request.getParameter("id") != "")
 			{
@@ -135,7 +143,7 @@ public class MovieHover extends HttpServlet {
 				dispatcher.forward(request, response);
 			}
 			response.getWriter().append("Served at: ").append(request.getContextPath());
-		} catch (SQLException e) {
+		} catch (SQLException | NamingException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -143,26 +151,32 @@ public class MovieHover extends HttpServlet {
 				{
 					cartQuery.close();
 				}
+				cartQuery = null;
 				if(starList != null)
 				{
 					starList.close();
 				}
+				starList = null;
 				if(genreList != null)
 				{
 					genreList.close();
 				}
+				genreList = null;
 				if(rs != null)
 				{
 					rs.close();
 				}
+				rs = null;
 				if(stmt != null)
 				{
 					stmt.close();
 				}
+				stmt = null;
 				if(conn != null)
 				{
 					conn.close();
 				}
+				conn = null;
 			} catch (SQLException e) 
 			{
 				e.printStackTrace();

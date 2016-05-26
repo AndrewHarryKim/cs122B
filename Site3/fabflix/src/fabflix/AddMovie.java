@@ -6,6 +6,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 
 @WebServlet("/AddMovie")
@@ -35,6 +39,10 @@ public class AddMovie extends HttpServlet {
 		CallableStatement cStmt = null;
 		Connection conn = null;
 		
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
 		
 		
 		
@@ -78,14 +86,13 @@ public class AddMovie extends HttpServlet {
 	    }
 	    else if(yearNum != null)
 	    {
-	    	try {
-				Class.forName("com.mysql.jdbc.Driver");
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
-			}
+	    	
 
 			try {
-				conn = DriverManager.getConnection(Global.dburl, Global.DB_USER, Global.DB_PASS);
+				initialContext = new InitialContext();
+				environmentContext = (Context) initialContext.lookup("java:comp/env");
+				dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+				conn = dataSource.getConnection();
 				cStmt = conn.prepareCall("{call add_movie(?, ?, ?, ?, ?, ?, ?, ?, ?)}");
 				
 		
@@ -116,8 +123,24 @@ public class AddMovie extends HttpServlet {
 				message += "added)<br/> ";
 
 				request.setAttribute("add_movie_message", message);
-	    	} catch (SQLException e1) {
+	    	} catch (SQLException | NamingException e1) {
 				e1.printStackTrace();
+			} finally {
+
+				try {
+					if(cStmt != null)
+					{
+							cStmt.close();
+					}
+					cStmt = null;
+					if(conn != null)
+					{
+						conn.close();
+					}
+					conn = null;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 	    }
 	    else

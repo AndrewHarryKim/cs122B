@@ -32,35 +32,12 @@ public class Success extends HttpServlet {
 	    }
 		
 		
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		try {
+		
 
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/success.jsp");
-			dispatcher.forward(request, response);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/success.jsp");
+		dispatcher.forward(request, response);
 
-		}
-		finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (stmt != null) {
-					stmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		
 	}
 
 

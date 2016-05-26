@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import com.sun.rowset.CachedRowSetImpl;
 
@@ -25,7 +29,6 @@ import com.sun.rowset.CachedRowSetImpl;
 @WebServlet("/StarPage")
 public class StarPage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
        
 
     public StarPage() {
@@ -42,23 +45,24 @@ public class StarPage extends HttpServlet {
 		
 		Connection conn = null;
 		Statement stmt = null;
-		Statement stmt2 = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
 		CachedRowSetImpl crs = null;
 		ResultSet movieList = null;
-		
+
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
 		
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		}
-		try {
-			conn = DriverManager.getConnection(dburl, Global.DB_USER, Global.DB_PASS);
+
+			initialContext = new InitialContext();
+			environmentContext = (Context) initialContext.lookup("java:comp/env");
+			dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+			conn = dataSource.getConnection();
 			
 			stmt = conn.createStatement();
-			stmt2 = conn.createStatement();
 			crs = new CachedRowSetImpl();
 			
 
@@ -109,7 +113,7 @@ public class StarPage extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | NamingException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -117,14 +121,17 @@ public class StarPage extends HttpServlet {
 				{
 					rs.close();
 				}
+				rs = null;
 				if(stmt != null)
 				{
 					stmt.close();
 				}
+				stmt = null;
 				if(conn != null)
 				{
 					conn.close();
 				}
+				conn = null;
 			} catch (SQLException e) 
 			{
 				e.printStackTrace();

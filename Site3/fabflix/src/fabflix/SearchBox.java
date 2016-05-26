@@ -10,12 +10,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import com.sun.rowset.CachedRowSetImpl;
 
@@ -96,6 +100,12 @@ public class SearchBox extends HttpServlet {
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
+		
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
+        
 		ArrayList<String> argumentList = new ArrayList<String>();
 		ArrayList<Integer> argumentTypes = new ArrayList<Integer>();
 		
@@ -105,12 +115,11 @@ public class SearchBox extends HttpServlet {
 			
 			
 			/*************************   Establish SQL Connection  *****************************/
-			try {
-				Class.forName("com.mysql.jdbc.Driver");
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			conn = DriverManager.getConnection(Global.dburl, Global.DB_USER, Global.DB_PASS);
+			initialContext = new InitialContext();
+			environmentContext = (Context) initialContext.lookup("java:comp/env");
+			dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+			conn = dataSource.getConnection();
+			
 			String key = request.getParameter("key");
 			String queryString = "";
 			PrintWriter out = response.getWriter();
@@ -138,7 +147,7 @@ public class SearchBox extends HttpServlet {
 			}
 			
 			
-		} catch (SQLException e) {
+		} catch (SQLException | NamingException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -146,10 +155,17 @@ public class SearchBox extends HttpServlet {
 				{
 					rs.close();
 				}
+				rs = null;
 				if(prepStmt != null)
 				{
 					prepStmt.close();
 				}
+				prepStmt = null;
+				if(conn != null)
+				{
+					conn.close();
+				}
+				conn = null;
 			} catch (SQLException e) 
 			{
 				e.printStackTrace();

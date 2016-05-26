@@ -8,11 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import org.json.JSONObject;
 
@@ -20,9 +24,6 @@ import org.json.JSONObject;
 @WebServlet("/AppMovieList")
 public class AppMovieList extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final int STRING_ARG_TYPE = 0;
-	private static final int INT_ARG_TYPE = 1;
-	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
        
     public AppMovieList() {
         super();
@@ -34,7 +35,13 @@ public class AppMovieList extends HttpServlet {
 		Connection conn = null;
 		PreparedStatement prepStmt = null;
 		ResultSet rs = null;
-		ArrayList<String> argumentList = new ArrayList<String>();
+
+		
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
+		
 		
 		JSONObject jsonIn = new JSONObject(request.getParameter("json"));
 		JSONObject jsonOut = new JSONObject();
@@ -47,12 +54,11 @@ public class AppMovieList extends HttpServlet {
 				
 				
 				/*************************   Establish SQL Connection  *****************************/
-				try {
-					Class.forName("com.mysql.jdbc.Driver");
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-				conn = DriverManager.getConnection(dburl, Global.DB_USER, Global.DB_PASS);
+
+				initialContext = new InitialContext();
+				environmentContext = (Context) initialContext.lookup("java:comp/env");
+				dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+				conn = dataSource.getConnection();
 				
 				tokens = title.split(" ");
 
@@ -74,8 +80,23 @@ public class AppMovieList extends HttpServlet {
 					jsonOut.put("movie"+rs.getInt(1), rs.getString(2));
 				}
 	
-			} catch (SQLException e){
+			} catch (SQLException | NamingException e){
 				e.printStackTrace();
+			} finally {
+				try {
+					if(rs != null)
+					{
+						rs.close();
+					}
+					rs = null;
+					if(conn != null)
+					{
+						conn.close();
+					}
+					conn = null;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		

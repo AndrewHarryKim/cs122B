@@ -11,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import com.sun.rowset.CachedRowSetImpl;
 
@@ -26,20 +30,11 @@ public class CheckCC extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	static String username = Global.DB_USER;
 	static String password = Global.DB_PASS;
-	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
 	public CheckCC() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession(true);
@@ -52,16 +47,20 @@ public class CheckCC extends HttpServlet {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
+
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
+		
+		
 		PrintWriter out = response.getWriter();
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
 
-			conn = DriverManager.getConnection(dburl, username, password);
+			initialContext = new InitialContext();
+			environmentContext = (Context) initialContext.lookup("java:comp/env");
+			dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+			conn = dataSource.getConnection();
 
 			stmt = conn.createStatement();
 			String cc_id = request.getParameter("cc_id");
@@ -106,7 +105,7 @@ public class CheckCC extends HttpServlet {
 			// getServletContext().getRequestDispatcher("/WEB-INF/empty-star-page.jsp");
 			// dispatcher.forward(request, response);
 			// }
-		} catch (SQLException e) {
+		} catch (SQLException | NamingException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -120,19 +119,13 @@ public class CheckCC extends HttpServlet {
 					conn.close();
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

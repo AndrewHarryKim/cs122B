@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 import com.sun.rowset.CachedRowSetImpl;
 
@@ -29,7 +33,6 @@ public class MovieList extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final int STRING_ARG_TYPE = 0;
 	private static final int INT_ARG_TYPE = 1;
-	static String dburl = "jdbc:mysql://localhost:3306/moviedb";
 
     public MovieList() {
         super();
@@ -473,20 +476,24 @@ public class MovieList extends HttpServlet {
 		ResultSet genreList = null;
 		ResultSet cartQuery = null;
 		CachedRowSetImpl crs = null;
+		
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        
+        String dataResourceName = "jdbc/moviedb";
 		ArrayList<String> argumentList = new ArrayList<String>();
 		ArrayList<Integer> argumentTypes = new ArrayList<Integer>();
 		try {
-
 			
 			
 			
 			/*************************   Establish SQL Connection  *****************************/
-			try {
-				Class.forName("com.mysql.jdbc.Driver");
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-			conn = DriverManager.getConnection(dburl, Global.DB_USER, Global.DB_PASS);
+
+			initialContext = new InitialContext();
+			environmentContext = (Context) initialContext.lookup("java:comp/env");
+			dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+			conn = dataSource.getConnection();
 			
 			
 			stmt = conn.createStatement();
@@ -608,7 +615,7 @@ public class MovieList extends HttpServlet {
 			dispatcher.forward(request, response);
 			
 			
-		} catch (SQLException e) {
+		} catch (SQLException | NamingException e) {
 			/*In Case of Failure, Forward to JSP Anyhow, Since rs is Not Set There Should Be No Visible Error*/
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/movie-list.jsp");
 			dispatcher.forward(request, response);
@@ -620,30 +627,37 @@ public class MovieList extends HttpServlet {
 				{
 					cartQuery.close();
 				}
+				cartQuery = null;
 				if(genreList != null)
 				{
 					genreList.close();
 				}
+				genreList = null;
 				if(starList != null)
 				{
 					starList.close();
 				}
+				starList = null;
 				if(rs != null)
 				{
 					rs.close();
 				}
+				rs = null;
 				if(prepStmt != null)
 				{
 					prepStmt.close();
 				}
+				prepStmt = null;
 				if(stmt != null)
 				{
 					stmt.close();
 				}
+				stmt = null;
 				if(conn != null)
 				{
 					conn.close();
 				}
+				conn = null;
 			} catch (SQLException e) 
 			{
 				e.printStackTrace();

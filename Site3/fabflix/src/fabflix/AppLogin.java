@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 
 @WebServlet("/AppLogin")
@@ -28,8 +32,13 @@ public class AppLogin extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
-        Connection con = null;
+        Connection conn = null;
         ResultSet rs = null;
+		
+		Context initialContext = null;
+        Context environmentContext = null;
+        DataSource dataSource = null;
+        String dataResourceName = "jdbc/moviedb";
 
 		String email = request.getParameter("email");    
 	    String pwd = request.getParameter("password");
@@ -39,11 +48,13 @@ public class AppLogin extends HttpServlet {
 	    	if(  (email != null && !("".equals(email))) &&
 	    			(pwd != null && !("".equals(pwd))))
 	    	{
-				Class.forName("com.mysql.jdbc.Driver");
-			    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/moviedb", Global.DB_USER, Global.DB_PASS);
+				initialContext = new InitialContext();
+				environmentContext = (Context) initialContext.lookup("java:comp/env");
+				dataSource = (DataSource) environmentContext.lookup(dataResourceName);
+				conn = dataSource.getConnection();
 			    
 		
-			    PreparedStatement preparedStatement = con.prepareStatement("select * from customers where email = ? and password = ?;");
+			    PreparedStatement preparedStatement = conn.prepareStatement("select * from customers where email = ? and password = ?;");
 			    preparedStatement.setString(1, email );
 			    preparedStatement.setString(2, pwd );
 
@@ -61,7 +72,7 @@ public class AppLogin extends HttpServlet {
 		    {
 		    	out.write("Please enter a username and password");
 		    }
-	    } catch (ClassNotFoundException | SQLException e) {
+	    } catch (SQLException | NamingException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -69,10 +80,12 @@ public class AppLogin extends HttpServlet {
 				{
 						rs.close();
 				}
-				if(con != null)
+				rs = null;
+				if(conn != null)
 				{
-					con.close();
+					conn.close();
 				}
+				conn = null;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

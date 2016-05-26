@@ -28,7 +28,7 @@
 					<%for(int i = 0;  i < movieTitles.size(); i++) {%>
 						<%request.setAttribute("tempString", (String)movieTitles.get(i));%>
 						<%request.setAttribute("tempInt", (int)movieIDs.get(i));%>
-						<a href="/fabflix/MoviePage?movieid=${tempInt}">${tempString}</a>
+						<a href="<%=request.getContextPath() %>/MoviePage?movieid=${tempInt}">${tempString}</a>
 						</div><div class="indent">
 					<%} %>
 				</div>

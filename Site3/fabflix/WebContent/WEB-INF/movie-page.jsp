@@ -42,7 +42,7 @@
 					<%for(int i = 0;  i < genreNames.size(); i++) {%>
 						<%request.setAttribute("tempString", (String)genreNames.get(i));%>
 						<%request.setAttribute("tempInt", (int)genreIDs.get(i));%>
-						<a href="/fabflix/MovieList?type=genre&id=${tempInt}">${tempString}</a>
+						<a href="<%=request.getContextPath() %>/MovieList?type=genre&id=${tempInt}">${tempString}</a>
 						</div><div class="indent">
 					<%} %>
 				</div>
@@ -53,7 +53,7 @@
 					<%for(int i = 0;  i < starNames.size(); i++) {%>
 						<%request.setAttribute("tempString", (String)starNames.get(i));%>
 						<%request.setAttribute("tempInt", (int)starIDs.get(i));%>
-						<a href="/fabflix/StarPage?starname=${tempString}">${tempString}</a>
+						<a href="<%=request.getContextPath() %>/StarPage?starname=${tempString}">${tempString}</a>
 						</div><div class="indent">
 					<%} %>
 				</div>

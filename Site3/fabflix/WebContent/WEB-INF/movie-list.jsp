@@ -67,7 +67,7 @@
 						onclick='updateQueryStringParameter("addToCart",<%=rs.getInt(1)%> )' />
 				</div> 
 				<div class="movieInfoDiv movieName"> 
-					<a class="movieHover" id="movieHoverName<%=rs.getInt(1)%>" movieID="<%=rs.getInt(1)%>" href="/fabflix/MoviePage?movieid=<%=rs.getInt(1)%>">
+					<a class="movieHover" id="movieHoverName<%=rs.getInt(1)%>" movieID="<%=rs.getInt(1)%>" href="<%=request.getContextPath() %>/MoviePage?movieid=<%=rs.getInt(1)%>">
 						<%=rs.getString(2)%>
 					</a> 
 					<div class="absolute-left movieHoverDiv" id="movieHoverDiv<%=rs.getInt(1)%>"></div>
@@ -78,7 +78,7 @@
 					<div>
 					<%for(int i = 0;  i < moviesAndStars.get(j).size(); i++) {%>
 						<%tempString = (String)moviesAndStars.get(j).get(i);%>
-						<a href="/fabflix/StarPage?starname=<%=tempString%>"><%=tempString%></a>
+						<a href="<%=request.getContextPath() %>/StarPage?starname=<%=tempString%>"><%=tempString%></a>
 						<%if((i+1)%3 == 0){ %>
 						</div><div>
 						<%} %>

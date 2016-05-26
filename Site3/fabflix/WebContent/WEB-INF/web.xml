@@ -9,12 +9,16 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
-  
+  <resource-ref>
+    <description>This is a reference to the global Resource for MySQL database connection.</description>
+    <res-ref-name>jdbc/movieb</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+  </resource-ref>
   <servlet>
     <servlet-name>Login</servlet-name>
     <servlet-class>fabflix.Login</servlet-class>
   </servlet>
-  
   <servlet-mapping>
     <servlet-name>Login</servlet-name>
     <url-pattern></url-pattern>
